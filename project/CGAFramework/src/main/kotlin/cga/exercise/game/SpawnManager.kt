@@ -21,10 +21,10 @@ class SpawnManager() {
 
 
     fun spawn(t:Float){
-//        if(shipS1.spawn(t))obstacleList.add(shipS1)
-//        if(shipS2.spawn(t))obstacleList.add(shipS2)
-//        if(shipL.spawn(t))obstacleList.add(shipL)
-        if(plane1.spawn(t))obstacleList.add(plane1)
+        if(shipS1.spawn(t))obstacleList.add(shipS1)
+        if(shipS2.spawn(t))obstacleList.add(shipS2)
+        if(shipL.spawn(t))obstacleList.add(shipL)
+//        if(plane1.spawn(t))obstacleList.add(plane1)
 //        if(plane2.spawn(t))obstacleList.add(plane2)
 //        if(buff.spawn(t))obstacleList.add(buff)
     }

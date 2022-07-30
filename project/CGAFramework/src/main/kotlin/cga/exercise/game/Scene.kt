@@ -104,10 +104,16 @@ class Scene(private val window: GameWindow) {
         )
         spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
 
-        player1.base?.translate(Vector3f(0f, 0f, 10f))
-        player2.base?.translate(Vector3f(0f, 0f, -10f))
+        val scenescale = 0.75
+        val spawnY = 6.0 * scenescale
+        val spawnZ = 55 * scenescale
 
-        val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
+        player1.base?.translate(Vector3f(0f, spawnY.toFloat(), spawnZ.toFloat()))
+        player2.base?.translate(Vector3f(0f, spawnY.toFloat(), -spawnZ.toFloat()))
+        player2.base?.rotate(0f,Math.toRadians(180.0).toFloat(),0f)
+
+        val scene = loadModel("assets/models/scene/gamescene.obj",Math.toRadians(270.0).toFloat(),0f,0f)
+        scene?.scale(Vector3f(scenescale.toFloat()))
         renderList.add(scene!!)
     }
     fun render(dt: Float, t: Float) {
@@ -118,7 +124,7 @@ class Scene(private val window: GameWindow) {
         // var newColor= Vector3f(0f,1f,0f)
 //        pointLight.bind(staticShader,newColor)
 //        spotLight1.bind(staticShader,newCam.getCalculateViewMatrix(),1)
-        spotLight2.bind(staticShader, newCam.getCalculateViewMatrix(), 2)
+        //spotLight2.bind(staticShader, newCam.getCalculateViewMatrix(), 2)
         for (i in renderList) {
             i.render(staticShader)
         }

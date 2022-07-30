@@ -11,6 +11,7 @@ class Tank{
     var barrel= loadModel("assets/models/Tank/toon_tank_barrel.obj",0f,0f,0f)
     var barrelAngle=0f
     var zoom=false
+    var shooting=false
 
     init{
         tower?.parent= base

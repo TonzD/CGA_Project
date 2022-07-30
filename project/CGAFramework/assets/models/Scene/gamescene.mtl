@@ -14,7 +14,7 @@ newmtl Sand
 	Ni 1.0000
 	Ke 0.0000 0.0000 0.0000
 	illum 2
-	map_Kd C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\sand.png
+	map_Kd scene_textures\sand.png
 
 newmtl Water
 	Kd 0.5000 0.5000 0.5000
@@ -29,9 +29,9 @@ newmtl Water
 	Ni 1.5200
 	Ke 0.0000 0.0000 0.0000
 	illum 2
-	map_Kd C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\water.png
-	bump C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\waterbump.png
-	map_bump C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\waterbump.png
+	map_Kd scene_textures\water.png
+	bump scene_textures\waterbump.png
+	map_bump scene_textures\waterbump.png
 
 newmtl Sky
 	Kd 0.5000 0.5000 0.5000
@@ -46,7 +46,7 @@ newmtl Sky
 	Ni 1.0000
 	Ke 0.0000 0.0000 0.0000
 	illum 2
-	map_Kd C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\sky.png
+	map_Kd scene_textures\sky.png
 
 newmtl Trees_01
 	Kd 0.5000 0.5000 0.5000
@@ -61,8 +61,8 @@ newmtl Trees_01
 	Ni 1.0000
 	Ke 0.0000 0.0000 0.0000
 	illum 2
-	map_Kd C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\trees.png
-	map_Tr C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\treesopac2.png
+	map_Kd scene_textures\trees.png
+	map_Tr scene_textures\treesopac2.png
 
 newmtl Trees_02
 	Kd 0.5000 0.5000 0.5000
@@ -77,5 +77,5 @@ newmtl Trees_02
 	Ni 1.0000
 	Ke 0.0000 0.0000 0.0000
 	illum 2
-	map_Kd C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\treesrotated.png
-	map_Tr C:\Users\Lars Drabek\Privates Zeug\Studium\Sem. 10\CGA\CGA_Project\project\CGAFramework\assets\models\Scene\scene_textures\treesrotopac2.png
+	map_Kd scene_textures\treesrotated.png
+	map_Tr scene_textures\treesrotopac2.png

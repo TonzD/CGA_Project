@@ -107,8 +107,8 @@ class Scene(private val window: GameWindow) {
         player1.base?.translate(Vector3f(0f, 0f, 10f))
         player2.base?.translate(Vector3f(0f, 0f, -10f))
 
-//        val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
-//        renderList.add(scene!!)
+        val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
+        renderList.add(scene!!)
     }
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)

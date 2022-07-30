@@ -1,4 +1,4 @@
-package cga.exercise.game
+package cga.exercise.game.objects.player
 
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
@@ -6,9 +6,11 @@ import cga.framework.ModelLoader.loadModel
 
 class Tank{
     var lifePoints=5
-    var base= loadModel("assets/models/Tank/toon_tank_base.obj",Math.toRadians(0.0).toFloat(),Math.toRadians(0.0).toFloat(),0f)
-    var tower= loadModel("assets/models/Tank/toon_tank_tower.obj",Math.toRadians(0.0).toFloat(),Math.toRadians(0.0).toFloat(),0f)
-    var barrel= loadModel("assets/models/Tank/toon_tank_barrel.obj",Math.toRadians(0.0).toFloat(),Math.toRadians(0.0).toFloat(),0f)
+    var base= loadModel("assets/models/Tank/toon_tank_base.obj",0f,0f,0f)
+    var tower= loadModel("assets/models/Tank/toon_tank_tower.obj",0f,0f,0f)
+    var barrel= loadModel("assets/models/Tank/toon_tank_barrel.obj",0f,0f,0f)
+    var barrelAngle=0f
+    var zoom=false
 
     init{
         tower?.parent= base

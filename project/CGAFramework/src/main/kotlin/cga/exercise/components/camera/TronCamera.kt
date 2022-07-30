@@ -1,7 +1,8 @@
-import cga.exercise.components.camera.ICamera
+package cga.exercise.components.camera
 import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
+
 
 class TronCamera(): ICamera, Transformable() {
 

@@ -189,4 +189,10 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
 
 //        throw NotImplementedError()
     }
+
+    fun resetTransformations() {
+        val m=Matrix4f()
+        modelMatrix.set(m)
+//        throw NotImplementedError()
+    }
 }

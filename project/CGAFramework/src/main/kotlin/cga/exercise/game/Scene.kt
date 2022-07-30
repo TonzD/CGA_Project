@@ -1,6 +1,7 @@
 package cga.exercise.game
 
-import cga.exercise.components.camera.TronCamera
+
+import TronCamera
 import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
@@ -40,6 +41,7 @@ class Scene(private val window: GameWindow) {
     val Player1=Tank()
     val Player2=Tank()
     var currentPlayer=Player1
+    var isZoomedIn =false
 
     //scene setup
 
@@ -91,8 +93,8 @@ class Scene(private val window: GameWindow) {
         motorrad?.scale(Vector3f(0.8f))
 
         angle=Math.toRadians(-35.0).toFloat()
-        newCam.preTranslate(Vector3f(0f,4f,10f))
-        newCam.rotateWorld(angle,0f,0f)
+        newCam.translate(Vector3f(0f,4f,10f))
+        newCam.rotate(angle,0f,0f)
         newCam.parent=currentPlayer.base
 
         pointLight= PointLight(Vector3f(0f,0.5f,0f),Vector3f(0.6f,0.1f,0.9f))
@@ -108,7 +110,7 @@ class Scene(private val window: GameWindow) {
         Player1.base?.translate(Vector3f(0f,0f,10f))
         Player2.base?.translate(Vector3f(0f,0f,-10f))
 
-        println("ha")
+
     }
 
     fun render(dt: Float, t: Float) {
@@ -128,7 +130,10 @@ class Scene(private val window: GameWindow) {
         Player1.render(staticShader)
         Player2.render(staticShader)
 
-
+        println("p1 getPosition "+Player1.base!!.getPosition())
+        println("p1 getWorldPosition "+Player1.base!!.getWorldPosition())
+        println("cam getPosition "+newCam.getPosition())
+        println("Cam getWorldPosition "+newCam.getWorldPosition())
     }
 
     fun update(dt: Float, t: Float) {
@@ -145,23 +150,33 @@ class Scene(private val window: GameWindow) {
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
-        if(key==GLFW_KEY_E&&action==GLFW_PRESS) newCam.parent=currentPlayer.barrel
+        if(key==GLFW_KEY_E&&action==GLFW_PRESS) zoomIn()
     }
 
     fun onMouseMove(xpos: Double, ypos: Double) {
         val dXPos = cXPos-xpos
-
-        val m=newCam.getCalculateViewMatrix().mul( currentPlayer.base?.getWorldModelMatrix())
-        val motopos= m.getColumn(3,Vector3f())
-
-        newCam.rotateWorld(0f,Math.toRadians(dXPos*0.02).toFloat(),0f)
+        if (!isZoomedIn){
         currentPlayer.tower?.rotate(0f,Math.toRadians(dXPos*0.02).toFloat(),0f)
-        //newCam.rotate(0f,Math.toRadians(dXPos*0.02).toFloat(),0f)
+        newCam.rotateAroundPoint(0f,Math.toRadians(dXPos*0.02).toFloat(),0f,Vector3f(0f))
+        }
         cXPos=xpos
     }
 
-    fun aim(key:Int,action:Int){
-
+    fun zoomIn(){
+        if (isZoomedIn){
+            currentPlayer.tower?.resetTransformations()
+            newCam.parent=currentPlayer.base
+            newCam.resetTransformations()
+            newCam.translate(Vector3f(0f,4f,10f))
+            newCam.rotate(Math.toRadians(-35.0).toFloat(),0f,0f)
+            isZoomedIn=false
+        }else{
+            newCam.parent=currentPlayer.tower
+            newCam.resetTransformations()
+            newCam.translate(Vector3f(0f,3f,-1f))
+            newCam.rotate(Math.toRadians(0.0).toFloat(),0f,0f)
+            isZoomedIn=true
+        }
     }
     fun cleanup() {}
 }

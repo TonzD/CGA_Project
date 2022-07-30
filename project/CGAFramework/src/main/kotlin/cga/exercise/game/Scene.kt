@@ -87,7 +87,7 @@ class Scene(private val window: GameWindow) {
         var angle = Math.toRadians(45.0).toFloat()
         //rBoden.rotate(0f,0f,angle)
 
-        renderList.add(rBoden)
+//        renderList.add(rBoden)
 
         //Camera binden
         angle = Math.toRadians(-35.0).toFloat()
@@ -106,6 +106,9 @@ class Scene(private val window: GameWindow) {
 
         player1.base?.translate(Vector3f(0f, 0f, 10f))
         player2.base?.translate(Vector3f(0f, 0f, -10f))
+
+//        val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
+//        renderList.add(scene!!)
     }
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)

@@ -1,5 +1,5 @@
 # Blender MTL File: 'None'
-# Material Count: 5
+# Material Count: 4
 
 newmtl (null)
 Ns 250.000000
@@ -10,17 +10,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-
-newmtl Material.002
-Ns 250.000000
-Ka 1.000000 1.000000 1.000000
-Kd 0.038645 0.075375 0.115134
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 3
-map_Kd darkBlue.png
 
 newmtl Material.003
 Ns 250.000000
@@ -44,12 +33,16 @@ d 1.000000
 illum 2
 map_Kd red.png
 
-newmtl Material.005
-Ns 250.000000
+newmtl Wooden_box_01_mtl
+Ns 224.999983
 Ka 1.000000 1.000000 1.000000
-Kd 0.337304 0.645954 0.800000
-Ks 0.500000 0.500000 0.500000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
-illum 3
+illum 1
+map_Bump Wooden_box_01_Normal.png
+map_Kd Wooden_box_01_BaseColor.png
+map_Ns Wooden_box_01_Roughness.png
+refl Wooden_box_01_Metallic.png

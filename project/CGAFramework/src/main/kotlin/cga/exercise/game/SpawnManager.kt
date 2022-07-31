@@ -4,17 +4,17 @@ import Plane
 import Ship
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.game.objects.obstacles.Buff
-import cga.exercise.game.objects.obstacles.BuffType
 import cga.exercise.game.objects.obstacles.Obstacles
-import cga.exercise.game.objects.obstacles.ShipType
+import cga.exercise.game.objects.obstacles.ShipSmall
+import org.joml.Vector3f
 import kotlin.random.Random
 
 class SpawnManager() {
     val obstacleList= mutableListOf<Obstacles>()
 
-    val shipS1=Ship(ShipType.SAIL,-10f)
-    val shipS2=Ship(ShipType.SAIL,10f)
-    val shipL=Ship(ShipType.CARGO,0f)
+    val shipS1= ShipSmall(-10f)
+    val shipS2=ShipSmall(10f)
+    val shipL=Ship(0f)
     val plane1=Plane(-10f)
     val plane2=Plane(10f)
     val buff=Buff()
@@ -23,7 +23,7 @@ class SpawnManager() {
     fun spawn(t:Float){
         if(shipS1.spawn(t))obstacleList.add(shipS1)
         if(shipS2.spawn(t))obstacleList.add(shipS2)
-        if(shipL.spawn(t))obstacleList.add(shipL)
+//        if(shipL.spawn(t))obstacleList.add(shipL)
 //        if(plane1.spawn(t))obstacleList.add(plane1)
 //        if(plane2.spawn(t))obstacleList.add(plane2)
 //        if(buff.spawn(t))obstacleList.add(buff)
@@ -52,6 +52,12 @@ class SpawnManager() {
         }
     }
 
+    fun checkMissileCollision(missileRadius:Float,missileWorldPosition:Vector3f):Boolean{
+        for (i in obstacleList){
+           if(i.checkCollision(missileRadius,missileWorldPosition)) return true
+        }
+        return false
+    }
 
     fun getRenderList():MutableList<Renderable?>{
         val renderlist=mutableListOf<Renderable?>()
@@ -60,4 +66,5 @@ class SpawnManager() {
         }
         return renderlist
     }
+
 }

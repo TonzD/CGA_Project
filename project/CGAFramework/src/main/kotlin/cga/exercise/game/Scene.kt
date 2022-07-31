@@ -1,18 +1,15 @@
 package cga.exercise.game
 
 
-import Ship
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.VertexAttribute
-import cga.exercise.components.light.PointLight
 import cga.exercise.components.light.SpotLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.exercise.game.objects.obstacles.Obstacles
-import cga.exercise.game.objects.obstacles.ShipType
 import cga.exercise.game.objects.player.Tank
 import cga.exercise.game.objects.projectile.Missile
 import cga.framework.GLError
@@ -32,8 +29,7 @@ import org.lwjgl.opengl.GL11.*
 class Scene(private val window: GameWindow) {
     private val staticShader: ShaderProgram
     private var renderList: MutableList<Renderable> = mutableListOf()
-    private var obstacleList: MutableList<Obstacles> = mutableListOf()
-    private var projectileList: MutableList<Missile> = mutableListOf()
+    private var projectileList: MutableList<Renderable> = mutableListOf()
     val newCam = TronCamera()
     var spotLight2: SpotLight
     var staticColor = Vector3f(0f, 1f, 0f)
@@ -41,8 +37,11 @@ class Scene(private val window: GameWindow) {
     val player1 = Tank()
     val player2 = Tank()
     var currentPlayer = player1
+    var enemyPlayer = player2
     val missile= Missile()
     val spawnManager=SpawnManager()
+    var explosionEnd=0f
+    var explosionStarted=false
 
     //scene setup
 
@@ -87,7 +86,7 @@ class Scene(private val window: GameWindow) {
         var angle = Math.toRadians(45.0).toFloat()
         //rBoden.rotate(0f,0f,angle)
 
-//        renderList.add(rBoden)
+ //      renderList.add(rBoden)
 
         //Camera binden
         angle = Math.toRadians(-35.0).toFloat()
@@ -104,6 +103,7 @@ class Scene(private val window: GameWindow) {
         )
         spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
 
+        spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
         val scenescale = 0.75
         val spawnY = 6.0 * scenescale
         val spawnZ = 55 * scenescale
@@ -122,14 +122,17 @@ class Scene(private val window: GameWindow) {
         newCam.bind(staticShader) // Macht es einen Unterschied, wenn wir die Camera vor den Objekten Binden oder danach?
         var newColor = Vector3f(sin(t) * 0.3f, sin(t) * 0.6f, sin(t) * 0.9f)
         // var newColor= Vector3f(0f,1f,0f)
-//        pointLight.bind(staticShader,newColor)
-//        spotLight1.bind(staticShader,newCam.getCalculateViewMatrix(),1)
-        //spotLight2.bind(staticShader, newCam.getCalculateViewMatrix(), 2)
+ //       pointLight.bind(staticShader,newColor)
+ //       spotLight1.bind(staticShader,newCam.getCalculateViewMatrix(),1)
+ //       spotLight2.bind(staticShader, newCam.getCalculateViewMatrix(), 2)
         for (i in renderList) {
             i.render(staticShader)
         }
         for (i in spawnManager.getRenderList()) {
             i?.render(staticShader)
+        }
+        for (i in projectileList) {
+            i.render(staticShader)
         }
         //  motorrad?.render(staticShader,newColor)//,Vector3f(1f,1f,1f))
         player1.render(staticShader)
@@ -142,28 +145,59 @@ class Scene(private val window: GameWindow) {
         spawnManager.move(dt)
         spawnManager.spawn(t)
         spawnManager.removeInvisible(t)
-        missile.move(dt)
+        if(currentPlayer.shooting) checkMissileCollision(dt,t)
+        if(explosionStarted){
+            if(explosionEnd<=t){
+                missile.model!!.resetTransformations()
+                projectileList.clear()
+                switchPlayer()
+                explosionStarted=false
+            }
+        }
+    }
+
+    fun checkMissileCollision(dt:Float,t:Float) {
+        if (spawnManager.checkMissileCollision(missile.getScaledRadius(), missile.model!!.getWorldPosition())){
+            println("obstacleHit")
+            currentPlayer.shooting=false
+            startExplosionAnimation(t)
+        }
+        if (missile.checkCollision(enemyPlayer.getScaledRadius(),enemyPlayer.base!!.getWorldPosition())) {
+            println("playerHit")
+            currentPlayer.shooting=false
+            startExplosionAnimation(t)
+        }
+        else missile.move(dt)
+    }
+
+    fun startExplosionAnimation(t:Float){
+        explosionEnd=t+5f
+        explosionStarted=true
+
     }
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
         if(key==GLFW_KEY_E&&action==GLFW_PRESS) zoomIn()
         if(key==GLFW_KEY_T&&action==GLFW_PRESS) switchPlayer()
-        if(currentPlayer.zoom&& key== GLFW_KEY_SPACE&& action==GLFW_PRESS){
+        if(currentPlayer.aiming&& key== GLFW_KEY_SPACE&& action==GLFW_PRESS){
             shoot()
         }
     }
     fun shoot(){
         missile.model!!.parent=currentPlayer.barrel
+        missile.model.resetTransformations()
+        missile.model.translate(Vector3f(0f,2f,-5f))
+        missile.model.scale(Vector3f(0.2f))
         newCam.parent=missile.model
         newCam.resetTransformations()
-        newCam.translate(Vector3f(0f,2f,10f))
-        newCam.rotate(Math.toRadians(-45.0).toFloat(),0f,0f)
-        renderList.add(missile.model)
+        newCam.translate(Vector3f(0f,2f,50f))
+        newCam.rotate(Math.toRadians(0.0).toFloat(),0f,0f)
+        projectileList.add(missile.model)
         currentPlayer.shooting=true
     }
 
     fun onMouseMove(xpos: Double, ypos: Double) {
         val dXPos = cXPos-xpos
-        if (!currentPlayer.zoom){
+        if (!currentPlayer.aiming){
         currentPlayer.tower?.rotate(0f,Math.toRadians(dXPos*0.02).toFloat(),0f)
         newCam.rotateAroundPoint(0f,Math.toRadians(dXPos*0.02).toFloat(),0f,Vector3f(0f))
         }else if(currentPlayer.shooting){
@@ -173,26 +207,25 @@ class Scene(private val window: GameWindow) {
     }
 
     fun zoomIn(){
-        if (currentPlayer.zoom){
+        if (currentPlayer.aiming){
             currentPlayer.tower?.resetTransformations()
             newCam.parent=currentPlayer.base
             newCam.resetTransformations()
             newCam.translate(Vector3f(0f,4f,10f))
             newCam.rotate(Math.toRadians(-35.0).toFloat(),0f,0f)
-            currentPlayer.zoom=false
+            currentPlayer.aiming=false
         }else{
             newCam.parent=currentPlayer.barrel
             newCam.resetTransformations()
             newCam.translate(Vector3f(0f,3.5f,0.8f))
             newCam.rotate(Math.toRadians(0.0).toFloat(),0f,0f)
-            currentPlayer.zoom=true
+            currentPlayer.aiming=true
         }
     }
 
     fun playerMovement(dt:Float){
-        if(currentPlayer.zoom&&!currentPlayer.shooting){
-            val z = 8f
-            val angle = Math.toRadians(60.0).toFloat()*dt
+        if(currentPlayer.aiming&&!currentPlayer.shooting){
+            val angle = Math.toRadians(45.0).toFloat()*dt
             if (window.getKeyState(GLFW_KEY_W)&&currentPlayer.barrelAngle>=0f){
                 currentPlayer.barrel?.rotate(-angle, 0f, 0f)
                 currentPlayer.barrelAngle-=Math.toDegrees(angle.toDouble()).toFloat()
@@ -204,7 +237,7 @@ class Scene(private val window: GameWindow) {
             if (window.getKeyState(GLFW_KEY_D)) currentPlayer.tower?.rotate(0f, -angle, 0f)
             if (window.getKeyState(GLFW_KEY_A)) currentPlayer.tower?.rotate(0f, angle, 0f)
         }
-        if(!currentPlayer.zoom&&!currentPlayer.shooting) {
+        if(!currentPlayer.aiming&&!currentPlayer.shooting) {
             val z = 8f
             val angle = Math.toRadians(60.0).toFloat() * dt
             if (window.getKeyState(GLFW_KEY_W)) currentPlayer.base?.translate(Vector3f(0f, 0f, -z * dt))
@@ -215,16 +248,19 @@ class Scene(private val window: GameWindow) {
     }
 
     fun switchPlayer(){
-        currentPlayer.zoom=false
+        currentPlayer.aiming=false
         if(currentPlayer==player1){
             currentPlayer=player2
+            enemyPlayer=player1
             resetCam()
         }
         else{
             currentPlayer=player1
+            enemyPlayer=player2
             resetCam()
         }
     }
+
     fun resetCam(){
         currentPlayer.tower?.resetTransformations()
         newCam.parent=currentPlayer.base

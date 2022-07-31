@@ -8,6 +8,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
      * Returns copy of object model matrix
      * @return modelMatrix
      */
+    var scaleFactor=1f
     fun getModelMatrix(): Matrix4f {
         val copy= Matrix4f()
         modelMatrix.get(copy)
@@ -94,6 +95,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
      */
     fun scale(scale: Vector3f) {
         modelMatrix.scale(scale)
+        scaleFactor *=(scale.x + scale.y + scale.z) / 3
         //throw NotImplementedError()
     }
 
@@ -193,6 +195,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
     fun resetTransformations() {
         val m=Matrix4f()
         modelMatrix.set(m)
+        scaleFactor=1f
 //        throw NotImplementedError()
     }
 }

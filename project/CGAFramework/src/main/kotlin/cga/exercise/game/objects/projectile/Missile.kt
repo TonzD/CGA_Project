@@ -28,6 +28,11 @@ class Missile() {
         println("Missile radius"+radius*model!!.scaleFactor)
         return radius*model!!.scaleFactor
     }
+    fun outOfMap():Boolean{
+        return!(model!!.getWorldPosition().x<=50 && model!!.getWorldPosition().x>=-50 &&
+                model!!.getWorldPosition().y<=50 && model!!.getWorldPosition().y>=0 &&
+                model!!.getWorldPosition().z<=50 && model!!.getWorldPosition().z>=-50)
+    }
     fun checkCollision(targetRadius:Float, targetWorldPosition:Vector3f):Boolean{
         val ownWorldPosition=model!!.getWorldPosition()
         val distance = Math.sqrt(

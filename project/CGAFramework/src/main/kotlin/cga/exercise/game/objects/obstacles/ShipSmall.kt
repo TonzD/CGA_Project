@@ -11,12 +11,14 @@ class ShipSmall(val spawnX: Float) : Obstacles () {
     override var nextSpawn= Random.nextInt(0, 5).toFloat()
     override val model:Renderable?
     override var radius = 4f
-
-    override var speed=Random.nextInt(5,10).toFloat()
-    var side=Random.nextInt(0, 100)
+    override var speed=0f
+    override var speedA = 5
+    override var speedB = 10
+    var side=0
     init {
-            model=loadModel("assets/models/LowPolyWoodSail/LowPolyWoodSail.obj",0f,Math.toRadians(90.0).toFloat(),0f)
-
+        model=loadModel("assets/models/LowPolyWoodSail/LowPolyWoodSail.obj",0f,Math.toRadians(90.0).toFloat(),0f)
+        setRanSpeed()
+        setRandomSpawnSide()
     }
 
     override fun move(dt:Float){
@@ -42,7 +44,5 @@ class ShipSmall(val spawnX: Float) : Obstacles () {
             model?.scale(Vector3f(2f))
         }
     }
-    override fun setRanSpeed(){
-        speed=Random.nextInt(5,10).toFloat()
-    }
+
 }

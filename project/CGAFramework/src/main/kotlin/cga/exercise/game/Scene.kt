@@ -10,6 +10,7 @@ import cga.exercise.components.light.SpotLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.exercise.game.objects.obstacles.Obstacles
+import cga.exercise.game.objects.player.PlayerType
 import cga.exercise.game.objects.player.Tank
 import cga.exercise.game.objects.projectile.Missile
 import cga.framework.GLError
@@ -34,8 +35,8 @@ class Scene(private val window: GameWindow) {
     var spotLight2: SpotLight
     var staticColor = Vector3f(0f, 1f, 0f)
     var cXPos = 0.0
-    val player1 = Tank()
-    val player2 = Tank()
+    val player1 = Tank(PlayerType.PLAYER1)
+    val player2 = Tank(PlayerType.PLAYER2)
     var currentPlayer = player1
     var enemyPlayer = player2
     val missile= Missile()
@@ -141,7 +142,7 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
-        playerMovement(dt)
+        currentPlayer.move(window,dt)
         spawnManager.move(dt)
         spawnManager.spawn(t)
         spawnManager.removeInvisible(t)
@@ -164,6 +165,10 @@ class Scene(private val window: GameWindow) {
         }
         if (missile.checkCollision(enemyPlayer.getScaledRadius(),enemyPlayer.base!!.getWorldPosition())) {
             println("playerHit")
+            currentPlayer.shooting=false
+            startExplosionAnimation(t)
+        }
+        if(missile.outOfMap()){
             currentPlayer.shooting=false
             startExplosionAnimation(t)
         }
@@ -223,29 +228,6 @@ class Scene(private val window: GameWindow) {
         }
     }
 
-    fun playerMovement(dt:Float){
-        if(currentPlayer.aiming&&!currentPlayer.shooting){
-            val angle = Math.toRadians(45.0).toFloat()*dt
-            if (window.getKeyState(GLFW_KEY_W)&&currentPlayer.barrelAngle>=0f){
-                currentPlayer.barrel?.rotate(-angle, 0f, 0f)
-                currentPlayer.barrelAngle-=Math.toDegrees(angle.toDouble()).toFloat()
-            }
-            if (window.getKeyState(GLFW_KEY_S)&&currentPlayer.barrelAngle<=45f){
-                currentPlayer.barrel?.rotate(angle,0f,0f)
-                currentPlayer.barrelAngle+=Math.toDegrees(angle.toDouble()).toFloat()
-            }
-            if (window.getKeyState(GLFW_KEY_D)) currentPlayer.tower?.rotate(0f, -angle, 0f)
-            if (window.getKeyState(GLFW_KEY_A)) currentPlayer.tower?.rotate(0f, angle, 0f)
-        }
-        if(!currentPlayer.aiming&&!currentPlayer.shooting) {
-            val z = 8f
-            val angle = Math.toRadians(60.0).toFloat() * dt
-            if (window.getKeyState(GLFW_KEY_W)) currentPlayer.base?.translate(Vector3f(0f, 0f, -z * dt))
-            if (window.getKeyState(GLFW_KEY_S)) currentPlayer.base?.translate(Vector3f(0f, 0f, z * dt))
-            if (window.getKeyState(GLFW_KEY_A)) currentPlayer.base?.rotate(0f, angle, 0f)
-            if (window.getKeyState(GLFW_KEY_D)) currentPlayer.base?.rotate(0f, -angle, 0f)
-        }
-    }
 
     fun switchPlayer(){
         currentPlayer.aiming=false

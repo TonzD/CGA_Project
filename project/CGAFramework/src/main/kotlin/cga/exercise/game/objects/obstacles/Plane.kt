@@ -8,14 +8,18 @@ class Plane(val spawnX:Float) : Obstacles() {
     override var isIdle= true
     override val model:Renderable?
     override var nextSpawn= Random.nextInt(0, 5).toFloat()
-    override var radius = 4f
+    override var radius = 4.3f
     override var speed = Random.nextInt(20,25).toFloat()
+    override var speedA =20
+    override var speedB= 25
 
     val altitude=20f
     var side=Random.nextInt(0, 100)
 
     init {
         model=loadModel("assets/models/Plane/WW2-Plane-LowPoly.obj",0f,0f,0f)
+        setRanSpeed()
+        setRandomSpawnSide()
     }
 
     override fun setRandomSpawnSide(){
@@ -34,7 +38,5 @@ class Plane(val spawnX:Float) : Obstacles() {
         }
     }
 
-    override fun setRanSpeed() {
-        speed=Random.nextInt(20,25).toFloat()
-    }
+
 }

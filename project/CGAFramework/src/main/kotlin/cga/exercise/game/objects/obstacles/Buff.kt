@@ -11,6 +11,8 @@ class Buff ():Obstacles(){
     override val model: Renderable?
     override var radius = 1f
     override var speed=1f
+    override var speedA =0
+    override var speedB= 0
     var side=Random.nextInt(0, 100)
     val altitude=20f
     var spawnX=Random.nextInt(0, 100).toFloat()
@@ -23,6 +25,7 @@ class Buff ():Obstacles(){
         model= ModelLoader.loadModel("assets/models/Parachute/parachute.obj", 0f, 0f, 0f)
         model?.scale(Vector3f(3f))
         setRandomBuffType()
+        setRandomSpawnSide()
     }
 
     override fun setRandomSpawnSide(){
@@ -49,6 +52,5 @@ class Buff ():Obstacles(){
     override fun move(dt:Float){
         model?.translate(Vector3f(0f,-speed * dt,0f))
     }
-
     override fun setRanSpeed(){}
 }

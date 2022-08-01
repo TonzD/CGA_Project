@@ -31,6 +31,8 @@ uniform float shininess;
 uniform sampler2D diff;
 uniform sampler2D emit;
 uniform sampler2D spec;
+uniform sampler2D opac;
+uniform sampler2D bump;
 
 uniform vec3 staticColor;
 
@@ -95,6 +97,12 @@ void pointlight(vec3 n,vec3 l,vec3 col){
   //  diffterm(n,l,col)+*attenuation
 }
 
+void alphaMapping () {
+        vec4 texColor = texture(emit, vertexData.tc);
+        if(texColor.a < 0.1)
+        discard;
+}
+
 void main(){
     //color = vec4(0, (0.5f + abs(vertexData.position.z)), 0, 1.0f);
     //color = vec4(abs(vertexData.tc), 1.0f);
@@ -107,7 +115,7 @@ void main(){
     vec3 sd2=normalize(spotDir2);
     vec3 n=normalize(vertexData.normal);
     vec3 l=normalize(toLight);
-
+    alphaMapping();
     color += vec4(invgamma(texture(emit,vertexData.tc).rgb)*staticColor,1.0f);
 
     spotlight1(n,sl1,spotColor1,sd1);

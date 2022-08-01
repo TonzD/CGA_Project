@@ -160,11 +160,15 @@ object ModelLoader {
         }
         // materials
         for (i in model.materials.indices) {
-            materials.add(Material(textures[model.materials[i].diffTexIndex],
-                    textures[model.materials[i].emitTexIndex],
-                    textures[model.materials[i].specTexIndex],
-                    model.materials[i].shininess,
-                    Vector2f(1.0f, 1.0f)))
+            materials.add(Material(
+                textures[model.materials[i].diffTexIndex],
+                textures[model.materials[i].emitTexIndex],
+                textures[model.materials[i].specTexIndex],
+                model.materials[i].shininess,
+                Vector2f(1.0f, 1.0f),
+                null,
+                null
+            ))
         }
         // meshes
         for (i in model.meshes.indices) {

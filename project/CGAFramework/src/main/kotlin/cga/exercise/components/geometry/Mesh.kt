@@ -23,7 +23,7 @@ import org.lwjgl.opengl.GL30
  *
  * Created by Fabian on 16.09.2017.
  */
-class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>,private val material: Material) {
+class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, var material: Material) {
     private var vaoID = 0
     private var vboID = 0
     private var iboID = 0

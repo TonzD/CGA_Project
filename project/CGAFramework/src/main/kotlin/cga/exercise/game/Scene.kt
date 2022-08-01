@@ -9,7 +9,6 @@ import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.light.SpotLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
-import cga.exercise.game.objects.obstacles.Obstacles
 import cga.exercise.game.objects.player.PlayerType
 import cga.exercise.game.objects.player.Tank
 import cga.exercise.game.objects.projectile.Missile
@@ -51,9 +50,9 @@ class Scene(private val window: GameWindow) {
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
-        glEnable(GL_CULL_FACE); GLError.checkThrow()
-        glFrontFace(GL_CCW); GLError.checkThrow()//CCW=CounterClockWise
-        glCullFace(GL_BACK); GLError.checkThrow()
+//        glEnable(GL_CULL_FACE); GLError.checkThrow()
+//        glFrontFace(GL_CCW); GLError.checkThrow()//CCW=CounterClockWise
+//        glCullFace(GL_BACK); GLError.checkThrow()
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
 
@@ -80,7 +79,7 @@ class Scene(private val window: GameWindow) {
         specular.setTexParams(GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
         val shininess = 5.0f
         val tcMultiplier = Vector2f(64f, 64f)
-        val material = Material(diff, emit, specular, shininess, tcMultiplier)
+        val material = Material(diff, emit, specular, shininess, tcMultiplier, null, null)
 
         val rBoden = Renderable(mutableListOf(Mesh(vertices, indices, attributes, material)))
         // rBoden.scale(Vector3f(0.03f))
@@ -114,6 +113,8 @@ class Scene(private val window: GameWindow) {
         player2.base?.rotate(0f,Math.toRadians(180.0).toFloat(),0f)
 
         val scene = loadModel("assets/models/scene/gamescene.obj",Math.toRadians(270.0).toFloat(),0f,0f)
+        scene?.meshes!![2]?.material.tcMultiplier = Vector2f(3f,3f)
+        scene?.meshes!![4]?.material.tcMultiplier = Vector2f(5f,1f)
         scene?.scale(Vector3f(scenescale.toFloat()))
         renderList.add(scene!!)
     }

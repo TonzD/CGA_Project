@@ -16,7 +16,6 @@ import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader.loadModel
 import cga.framework.OBJLoader
-import org.joml.Math.sin
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
@@ -79,7 +78,7 @@ class Scene(private val window: GameWindow) {
         specular.setTexParams(GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
         val shininess = 5.0f
         val tcMultiplier = Vector2f(64f, 64f)
-        val material = Material(diff, emit, specular, shininess, tcMultiplier, null, null)
+        val material = Material(diff, emit, specular, shininess, tcMultiplier, null)
 
         val rBoden = Renderable(mutableListOf(Mesh(vertices, indices, attributes, material)))
         // rBoden.scale(Vector3f(0.03f))
@@ -102,8 +101,8 @@ class Scene(private val window: GameWindow) {
             Math.toRadians(15.0).toFloat()
         )
         spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
-
         spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
+
         val scenescale = 0.75
         val spawnY = 6.0 * scenescale
         val spawnZ = 55 * scenescale
@@ -112,21 +111,19 @@ class Scene(private val window: GameWindow) {
         player2.base?.translate(Vector3f(0f, spawnY.toFloat(), -spawnZ.toFloat()))
         player2.base?.rotate(0f,Math.toRadians(180.0).toFloat(),0f)
 
-        val scene = loadModel("assets/models/scene/gamescene.obj",Math.toRadians(270.0).toFloat(),0f,0f)
-        scene?.meshes!![2]?.material.tcMultiplier = Vector2f(3f,3f)
-        scene?.meshes!![4]?.material.tcMultiplier = Vector2f(5f,1f)
-        scene?.scale(Vector3f(scenescale.toFloat()))
-        renderList.add(scene!!)
+        //Math.toRadians(270.0).toFloat()
+
+        val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
+        scene?.meshes!![2].material.tcMultiplier = Vector2f(3f,3f)
+        scene.meshes[2].material.bump = Texture2D("assets/models/Scene/scene_textures/waterbump.png", true)
+        scene.meshes[4].material.tcMultiplier = Vector2f(5f,1f)
+        scene.scale(Vector3f(scenescale.toFloat()))
+        renderList.add(scene)
     }
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         staticShader.use()
         newCam.bind(staticShader) // Macht es einen Unterschied, wenn wir die Camera vor den Objekten Binden oder danach?
-        var newColor = Vector3f(sin(t) * 0.3f, sin(t) * 0.6f, sin(t) * 0.9f)
-        // var newColor= Vector3f(0f,1f,0f)
- //       pointLight.bind(staticShader,newColor)
- //       spotLight1.bind(staticShader,newCam.getCalculateViewMatrix(),1)
- //       spotLight2.bind(staticShader, newCam.getCalculateViewMatrix(), 2)
         for (i in renderList) {
             i.render(staticShader)
         }
@@ -136,7 +133,6 @@ class Scene(private val window: GameWindow) {
         for (i in projectileList) {
             i.render(staticShader)
         }
-        //  motorrad?.render(staticShader,newColor)//,Vector3f(1f,1f,1f))
         player1.render(staticShader)
         player2.render(staticShader)
 

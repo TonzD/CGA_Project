@@ -166,7 +166,6 @@ object ModelLoader {
                 textures[model.materials[i].specTexIndex],
                 model.materials[i].shininess,
                 Vector2f(1.0f, 1.0f),
-                null,
                 null
             ))
         }

@@ -19,7 +19,7 @@ class TronCamera(): ICamera, Transformable() {
         val fov = Math.toRadians(90.0).toFloat()
         val aspect = 16f / 9f
         val near = 0.1f
-        val far = 100f
+        val far = 250f
         val newMat = Matrix4f()
 
         return newMat.perspective(fov, aspect, near, far)

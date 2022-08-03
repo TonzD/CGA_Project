@@ -10,7 +10,6 @@ class Material(
     var specular: Texture2D,
     var shininess: Float = 50.0f,
     var tcMultiplier: Vector2f = Vector2f(1.0f),
-    var opac: Texture2D?,
     var bump: Texture2D?
 ){
 
@@ -21,13 +20,9 @@ class Material(
         shaderProgram.setUniform("emit",0)
         shaderProgram.setUniform("diff",1)
         shaderProgram.setUniform("spec",2)
-        if (opac != null){
-            opac?.bind(3)
-            shaderProgram.setUniform("opac",3)
-        }
         if (bump!= null){
-            bump?.bind(4)
-            shaderProgram.setUniform("bump",4)
+            bump?.bind(3)
+            shaderProgram.setUniform("bump",3)
         }
         shaderProgram.setUniform("shininess",shininess)
         shaderProgram.setUniform("tcMultiplier",tcMultiplier)

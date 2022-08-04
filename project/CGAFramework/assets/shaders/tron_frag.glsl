@@ -31,7 +31,7 @@ uniform float shininess;
 uniform sampler2D diff;
 uniform sampler2D emit;
 uniform sampler2D spec;
-uniform sampler2D bump;
+uniform sampler2D normalMap;
 
 uniform vec3 staticColor;
 
@@ -102,6 +102,24 @@ void alphaMapping() {
         discard;
 }
 
+void normalMapping() {
+
+    vec3 nMap = texture(normalMap, vertexData.tc).rgb;
+    if (nMap != 0){
+        float xval = vertexData.position.x;
+        float zval = vertexData.position.z;
+        vec3 xvec = vec3(xval,0.0,0.0);
+        vec3 zvec = vec3(0.0,0.0,zval);
+        vec3 newVertexNormal = cross(xvec,zvec);
+        if(newVertexNormal.y < 0){
+            newVertexNormal.y *-1.0;
+        }
+        normalize(newVertexNormal);
+        newVertexNormal = nMap;
+        newVertexNormal = normalize(newVertexNormal * 2.0 - 1.0);
+    }
+}
+
 void main(){
     //color = vec4(0, (0.5f + abs(vertexData.position.z)), 0, 1.0f);
     //color = vec4(abs(vertexData.tc), 1.0f);
@@ -115,7 +133,7 @@ void main(){
     vec3 n=normalize(vertexData.normal);
     vec3 l=normalize(toLight);
     alphaMapping();
-    //bumpMapping();
+    normalMapping();
     color += vec4(invgamma(texture(emit,vertexData.tc).rgb)*staticColor,1.0f);
 
 //    spotlight1(n,sl1,spotColor1,sd1);

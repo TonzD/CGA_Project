@@ -120,7 +120,7 @@ class Scene(private val window: GameWindow) {
         val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
         scene?.meshes!![2].material.tcMultiplier = Vector2f(3f,3f)
         scene.meshes[2].material.diff = Texture2D("assets/models/Scene/scene_textures/waterdiff.png",true)
-        scene.meshes[2].material.bump = Texture2D("assets/models/Scene/scene_textures/waterbump.png", true)
+        scene.meshes[2].material.normalMap = Texture2D("assets/models/Scene/scene_textures/waternormal.png", true)
         scene.meshes[4].material.tcMultiplier = Vector2f(5f,1f)
         scene.scale(Vector3f(scenescale.toFloat()))
         renderList.add(scene)
@@ -152,7 +152,6 @@ class Scene(private val window: GameWindow) {
         checkBuffCollision()
         if(currentPlayer.shooting) checkMissileCollision(dt,t)
         endExplosionAnimation(dt,t)
-
     }
 
     fun checkMissileCollision(dt:Float,t:Float) {

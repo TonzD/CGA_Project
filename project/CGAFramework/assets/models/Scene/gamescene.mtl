@@ -30,7 +30,7 @@ newmtl Water
 	Ke 0.0000 0.0000 0.0000
 	illum 2
 	map_Kd scene_textures\water.png
-	bump scene_textures\waterbump.png
+	normalMap scene_textures\waternormal.png
 	map_bump scene_textures\waterbump.png
 
 newmtl Sky

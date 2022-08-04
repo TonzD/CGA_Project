@@ -14,12 +14,12 @@ class SpotLight(
     private val innerAngle:Float= Math.toRadians(15.0).toFloat()
 ):PointLight(lPosI,rgb),ISpotLight{
 
-    override fun bind(shaderProgram: ShaderProgram, viewMatrix: Matrix4f,index:Int) {
+    override fun bind(shaderProgram: ShaderProgram, viewMatrix: Matrix4f) {
 
-        shaderProgram.setUniform("spotPos$index",getWorldPosition())
-        shaderProgram.setUniform("spotColor$index",rgb)
-        shaderProgram.setUniform("spotDir$index",getWorldZAxis().negate().mul(Matrix3f(viewMatrix)))
-        shaderProgram.setUniform("outerAngle$index",cos(outerAngle))
-        shaderProgram.setUniform("innerAngle$index",cos(innerAngle))
+        shaderProgram.setUniform("spotPos",getWorldPosition())
+        shaderProgram.setUniform("spotColor",rgb)
+        shaderProgram.setUniform("spotDir",getWorldZAxis().negate().mul(Matrix3f(viewMatrix)))
+        shaderProgram.setUniform("outerAngle",cos(outerAngle))
+        shaderProgram.setUniform("innerAngle",cos(innerAngle))
     }
 }

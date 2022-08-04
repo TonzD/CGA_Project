@@ -97,6 +97,7 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
         return false
     }
 
+
     /**
      * Sets a single float uniform
      * @param name  Name of the uniform variable in the shader
@@ -112,6 +113,18 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
         }
         return false
     }
+
+/*    fun setUniform(name: String, value: Float): Boolean {
+        if (programID == 0) return false
+        val loc = GL20.glGetUniformLocation(programID, name)
+        if (loc != -1) {
+            GL20.glUniform1f(loc, value)
+            return true
+        }
+        return false
+    }
+
+ */
 
 
     /**

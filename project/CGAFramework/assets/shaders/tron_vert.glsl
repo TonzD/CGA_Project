@@ -57,6 +57,4 @@ void main(){
     vertexData.tc=tc*tcMultiplier; // Komponentenweise Multiplication
     vertexData.position=pos.xyz;
     vertexData.normal=nor.xyz;
-
-
 }

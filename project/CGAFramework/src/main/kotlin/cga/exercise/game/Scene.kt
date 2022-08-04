@@ -29,6 +29,7 @@ import org.lwjgl.opengl.GL11.*
  */
 class Scene(private val window: GameWindow) {
     private val staticShader: ShaderProgram
+    private val toonShader: ShaderProgram
     private var renderList: MutableList<Renderable> = mutableListOf()
     private var projectileList: MutableList<Renderable> = mutableListOf()
     val newCam = TronCamera()
@@ -50,7 +51,8 @@ class Scene(private val window: GameWindow) {
     //scene setup
 
     init {
-        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
+        staticShader = ShaderProgram("assets/shaders/toon_vert.glsl", "assets/shaders/toon_frag.glsl")
+        toonShader = ShaderProgram("assets/shaders/toon_vert.glsl", "assets/shaders/toon_frag.glsl")
 
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -108,6 +110,7 @@ class Scene(private val window: GameWindow) {
         spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
         spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
 
+
         val scenescale = 0.75
         val spawnY = 6.0 * scenescale
         val spawnZ = 55 * scenescale
@@ -140,6 +143,7 @@ class Scene(private val window: GameWindow) {
         }
         player1.render(staticShader)
         player2.render(staticShader)
+        spotLight2.bind(staticShader)
 
     }
 

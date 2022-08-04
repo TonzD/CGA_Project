@@ -9,9 +9,11 @@ import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.light.SpotLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
+import cga.exercise.game.objects.obstacles.BuffType
 import cga.exercise.game.objects.player.PlayerType
 import cga.exercise.game.objects.player.Tank
 import cga.exercise.game.objects.projectile.Missile
+import cga.exercise.game.objects.projectile.Orb
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader.loadModel
@@ -33,14 +35,17 @@ class Scene(private val window: GameWindow) {
     var spotLight2: SpotLight
     var staticColor = Vector3f(0f, 1f, 0f)
     var cXPos = 0.0
+    var cYPos = 0.0
     val player1 = Tank(PlayerType.PLAYER1)
     val player2 = Tank(PlayerType.PLAYER2)
     var currentPlayer = player1
     var enemyPlayer = player2
     val missile= Missile()
+    val orb= Orb()
     val spawnManager=SpawnManager()
     var explosionEnd=0f
     var explosionStarted=false
+    var tCopy=0f
 
     //scene setup
 
@@ -139,19 +144,15 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
+        tCopy=t
         currentPlayer.move(window,dt)
-        spawnManager.move(dt)
+        spawnManager.move(dt,t)
         spawnManager.spawn(t)
         spawnManager.removeInvisible(t)
+        checkBuffCollision()
         if(currentPlayer.shooting) checkMissileCollision(dt,t)
-        if(explosionStarted){
-            if(explosionEnd<=t){
-                missile.model!!.resetTransformations()
-                projectileList.clear()
-                switchPlayer()
-                explosionStarted=false
-            }
-        }
+        endExplosionAnimation(dt,t)
+
     }
 
     fun checkMissileCollision(dt:Float,t:Float) {
@@ -161,29 +162,69 @@ class Scene(private val window: GameWindow) {
             startExplosionAnimation(t)
         }
         if (missile.checkCollision(enemyPlayer.getScaledRadius(),enemyPlayer.base!!.getWorldPosition())) {
-            println("playerHit")
+            enemyPlayer.loseLp(currentPlayer.dmg)
+            currentPlayer.dmg=1
             currentPlayer.shooting=false
             startExplosionAnimation(t)
+            println("playerHit")
         }
         if(missile.outOfMap()){
             currentPlayer.shooting=false
             startExplosionAnimation(t)
         }
-        else missile.move(dt)
+        else {
+            missile.move(dt)
+        }
+    }
+
+    fun checkBuffCollision(){
+        if(currentPlayer.checkCollision(spawnManager.buff.radius,spawnManager.buff.model!!.getWorldPosition())){
+            if(spawnManager.buff.buffType==BuffType.HEAL) {
+                println(currentPlayer.playerType.toString()+" gained a healbuff")
+                currentPlayer.gainLp()
+                spawnManager.buff.deSpawn=true
+            }
+            if(spawnManager.buff.buffType==BuffType.DMG){
+                println(currentPlayer.playerType.toString()+" gained a damagebuff")
+                currentPlayer.dmg=2
+                spawnManager.buff.deSpawn=true
+            }
+        }
     }
 
     fun startExplosionAnimation(t:Float){
-        explosionEnd=t+5f
+        explosionEnd=t+1.5f
+        orb.model!!.parent=missile.model
+        orb.model!!.scale(Vector3f(7f))
+        projectileList.add(orb.model!!)
         explosionStarted=true
 
     }
+    fun endExplosionAnimation(dt:Float,t:Float){
+        if(explosionStarted){
+            orb.move(dt)
+            if(explosionEnd<=t){
+                missile.model!!.resetTransformations()
+                orb.model!!.resetTransformations()
+                projectileList.clear()
+                switchPlayer()
+                explosionStarted=false
+            }
+        }
+    }
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
-        if(key==GLFW_KEY_E&&action==GLFW_PRESS) zoomIn()
-        if(key==GLFW_KEY_T&&action==GLFW_PRESS) switchPlayer()
-        if(currentPlayer.aiming&& key== GLFW_KEY_SPACE&& action==GLFW_PRESS){
+        if (!currentPlayer.shooting && key == GLFW_KEY_E && action == GLFW_PRESS) zoomIn()
+        if (key == GLFW_KEY_T && action == GLFW_PRESS) switchPlayer()
+        if (currentPlayer.aiming && key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+            missile.chargeStart =tCopy
+        }
+        if (currentPlayer.aiming && key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+            missile.chargeEnd =tCopy
+            missile.calculateCharge()
             shoot()
         }
     }
+
     fun shoot(){
         missile.model!!.parent=currentPlayer.barrel
         missile.model.resetTransformations()
@@ -199,13 +240,16 @@ class Scene(private val window: GameWindow) {
 
     fun onMouseMove(xpos: Double, ypos: Double) {
         val dXPos = cXPos-xpos
+        val dYPos = cYPos-ypos
         if (!currentPlayer.aiming){
-        currentPlayer.tower?.rotate(0f,Math.toRadians(dXPos*0.02).toFloat(),0f)
-        newCam.rotateAroundPoint(0f,Math.toRadians(dXPos*0.02).toFloat(),0f,Vector3f(0f))
+            currentPlayer.tower?.rotate(0f,Math.toRadians(dXPos*0.02).toFloat(),0f)
+            newCam.rotateAroundPoint(0f,Math.toRadians(dXPos*0.02).toFloat(),0f,Vector3f(0f))
+            newCam.rotateAroundPointOwn(Math.toRadians(dYPos*0.02).toFloat(),0f,0f,Vector3f(0f))
         }else if(currentPlayer.shooting){
             newCam.rotateAroundPoint(0f,Math.toRadians(dXPos*0.02).toFloat(),0f,Vector3f(0f))
         }
         cXPos=xpos
+        cYPos=ypos
     }
 
     fun zoomIn(){
@@ -231,11 +275,13 @@ class Scene(private val window: GameWindow) {
         if(currentPlayer==player1){
             currentPlayer=player2
             enemyPlayer=player1
+            println("---"+currentPlayer.playerType.toString()+" Turn ---")
             resetCam()
         }
         else{
             currentPlayer=player1
             enemyPlayer=player2
+            println("---"+currentPlayer.playerType.toString()+" Turn ---")
             resetCam()
         }
     }

@@ -14,7 +14,8 @@ abstract class Obstacles (){
     abstract val speedA:Int
     abstract val speedB:Int
 
-    fun spawn(t:Float):Boolean{
+
+    open fun spawn(t:Float):Boolean{
         if(nextSpawn<=t&&isIdle) {
             setRandomSpawnSide()
             setRanSpeed()
@@ -27,7 +28,7 @@ abstract class Obstacles (){
     open fun move(dt:Float){
         model?.translate(Vector3f(0f, 0f, -speed * dt))
     }
-    fun isInvisible():Boolean{
+   open fun isInvisible():Boolean{
         return !(model!!.getWorldPosition()!!.x>-60
                 &&model!!.getWorldPosition()!!.x<60
                 &&model!!.getWorldPosition()!!.y>-60
@@ -36,15 +37,14 @@ abstract class Obstacles (){
                 &&model!!.getWorldPosition()!!.z<=60)
     }
     fun getScaledRadius():Float{
-        println("radius"+radius*model!!.scaleFactor)
         return radius*model!!.scaleFactor
     }
-    fun checkCollision(targetRadius:Float, targetWorldPosition:Vector3f):Boolean{
+    open fun checkCollision(targetRadius:Float, targetWorldPosition:Vector3f):Boolean{
         val ownWorldPosition=model!!.getWorldPosition()
         val distance = Math.sqrt(
-                    (ownWorldPosition.x - targetWorldPosition.x) * (ownWorldPosition.x - targetWorldPosition.x) +
-                    (ownWorldPosition.y - targetWorldPosition.y) * (ownWorldPosition.y - targetWorldPosition.y) +
-                    (ownWorldPosition.z - targetWorldPosition.z) * (ownWorldPosition.z - targetWorldPosition.z).toDouble())
+                    (ownWorldPosition.x - targetWorldPosition.x).pow(2) +
+                    (ownWorldPosition.y - targetWorldPosition.y) .pow(2)+
+                    (ownWorldPosition.z - targetWorldPosition.z).pow(2).toDouble())
         return distance < (getScaledRadius() + targetRadius)
     }
     open fun setRanSpeed() {

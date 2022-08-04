@@ -39,7 +39,7 @@ out vec3 toCamera; // Texel to Camera
 //main
 void main(){
 
-    vec4 pos = projection_matrix*view_matrix*model_matrix * vec4(position, 1.0f);
+    vec4 pos = projection_matrix*view_matrix *model_matrix* vec4(position, 1.0f);
     gl_Position =vec4(pos.x,pos.y, pos.z,pos.w);
 
     // Nach Tranformationen Normale korrigieren

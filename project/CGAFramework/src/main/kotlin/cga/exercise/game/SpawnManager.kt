@@ -29,13 +29,13 @@ class SpawnManager() {
         if(buff.spawn(t))obstacleList.add(buff)
     }
 
-    fun move(dt:Float){
+    fun move(dt:Float,t:Float){
         shipS1.move(dt)
         shipS2.move(dt)
         shipL.move(dt)
         plane1.move(dt)
         plane2.move(dt)
-        buff.move(dt)
+        buff.move(dt,t)
     }
 
     fun removeInvisible(t:Float){
@@ -43,7 +43,7 @@ class SpawnManager() {
             for (i in obstacleList) {
                 if (i.isInvisible()) {
                     i.isIdle = true
-                    i.nextSpawn = t + Random.nextInt(0, 5).toFloat()
+                    i.nextSpawn = t + Random.nextInt(3, 5).toFloat()
                     obstacleList.remove(i)
                     removeInvisible(t)
                     break

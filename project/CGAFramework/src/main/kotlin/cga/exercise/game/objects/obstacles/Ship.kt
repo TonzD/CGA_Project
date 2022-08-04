@@ -9,7 +9,7 @@ class Ship(val spawnX: Float) : Obstacles () {
     override var isIdle = true
     override var nextSpawn = Random.nextInt(0, 5).toFloat()
     override val model: Renderable?
-    override var radius = 2.0f
+    override var radius = 2f
     override var speed = 0f
     override var speedA = 5
     override var speedB = 10
@@ -39,5 +39,18 @@ class Ship(val spawnX: Float) : Obstacles () {
             model?.translate(Vector3f(spawnX, 0f, 50f))
             model?.scale(Vector3f(8f))
         }
+    }
+    override fun checkCollision(targetRadius:Float, targetWorldPosition:Vector3f):Boolean{
+        val ownWorldPosition=model!!.getWorldPosition()
+        val distance1 = Math.sqrt(
+                    (ownWorldPosition.x-1 - targetWorldPosition.x).pow(2) +
+                    (ownWorldPosition.y - targetWorldPosition.y) .pow(2)+
+                    (ownWorldPosition.z  - targetWorldPosition.z).pow(2).toDouble())
+        val distance2 = Math.sqrt(
+                    (ownWorldPosition.x+0.5 - targetWorldPosition.x).pow(2) +
+                    (ownWorldPosition.y - targetWorldPosition.y) .pow(2)+
+                    (ownWorldPosition.z - targetWorldPosition.z).pow(2).toDouble())
+
+        return distance1 < (getScaledRadius() + targetRadius) || distance2 < (getScaledRadius() + targetRadius)
     }
 }

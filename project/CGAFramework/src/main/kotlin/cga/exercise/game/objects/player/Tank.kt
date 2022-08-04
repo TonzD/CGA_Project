@@ -10,14 +10,15 @@ import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW
 
 class Tank(val playerType: PlayerType){
-    var lifePoints=5
+    var lifePoints=3
     var base= loadModel("assets/models/Tank/toon_tank_base.obj",0f,0f,0f)
     var tower= loadModel("assets/models/Tank/toon_tank_tower.obj",0f,0f,0f)
     var barrel= loadModel("assets/models/Tank/toon_tank_barrel.obj",0f,0f,0f)
     var barrelAngle=0f
     var aiming=false
     var shooting=false
-    var radius=3f
+    var radius=2f
+    var dmg=1
 
 
     init{
@@ -34,20 +35,22 @@ class Tank(val playerType: PlayerType){
                         (ownWorldPosition.z - targetWorldPosition.z) * (ownWorldPosition.z - targetWorldPosition.z).toDouble())
         return distance < (getScaledRadius() + targetRadius)
     }
-    fun loseLp(){
-        lifePoints--
+    fun loseLp(dmg:Int){
+        lifePoints -= dmg
+        println(playerType.toString() +" current LP: "+lifePoints)
         if (lifePoints<=0){
-            println("u dead son")
+            println(playerType.toString() +" is dead!")
         }
     }
 
     fun gainLp(){
         if (lifePoints<5){
             lifePoints++
-        } else println("u're cheating!")
+            println(playerType.toString() +" current LP: "+lifePoints)
+        } else println("already MAX Lp")
     }
 
-    fun isDead():Boolean=lifePoints<=0
+  //  fun isDead():Boolean=lifePoints<=0
 
     fun move(window:GameWindow,dt:Float){
         if(aiming && !shooting){
@@ -96,13 +99,13 @@ class Tank(val playerType: PlayerType){
     fun outOfMap():Boolean{
         if(playerType==PlayerType.PLAYER1) {
             return !(base!!.getWorldPosition().x <= 50 && base!!.getWorldPosition().x >= -50 &&
-                    base!!.getWorldPosition().y <= 50 && base!!.getWorldPosition().y >= 0 &&
-                    base!!.getWorldPosition().z <= 50 && base!!.getWorldPosition().z >= -50)
+                    base!!.getWorldPosition().y <= 50 && base!!.getWorldPosition().y >= 4 &&
+                    base!!.getWorldPosition().z <= 50 && base!!.getWorldPosition().z >= 33)
         }
         else{
             return !(base!!.getWorldPosition().x <= 50 && base!!.getWorldPosition().x >= -50 &&
-                    base!!.getWorldPosition().y <= 50 && base!!.getWorldPosition().y >= 0 &&
-                    base!!.getWorldPosition().z <= 50 && base!!.getWorldPosition().z >= -50)
+                    base!!.getWorldPosition().y <= 50 && base!!.getWorldPosition().y >= 4 &&
+                    base!!.getWorldPosition().z <= -33 && base!!.getWorldPosition().z >= -50)
         }
     }
 

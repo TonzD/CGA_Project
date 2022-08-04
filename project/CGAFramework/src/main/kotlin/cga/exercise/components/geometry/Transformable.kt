@@ -1,5 +1,6 @@
 package cga.exercise.components.geometry
 
+import org.joml.Matrix3f
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
@@ -9,6 +10,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
      * @return modelMatrix
      */
     var scaleFactor=1f
+    var lastPosition=Vector3f(0f,0f,0f)
     fun getModelMatrix(): Matrix4f {
         val copy= Matrix4f()
         modelMatrix.get(copy)
@@ -42,12 +44,14 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
         val m = Matrix4f()
         m.rotateXYZ(pitch,yaw,roll)
         m.mul(modelMatrix,modelMatrix)
+        setLastPosition()
        // throw NotImplementedError()
     }
     fun rotate(pitch: Float, yaw: Float, roll: Float) {
         val m = Matrix4f()
         m.rotateXYZ(pitch,yaw,roll)
         modelMatrix.mul(m,modelMatrix)
+        setLastPosition()
         // throw NotImplementedError()
     }
 
@@ -64,7 +68,17 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
         m.rotateXYZ(pitch,yaw,roll)
         m.translate(altMidpoint.negate())
         m.mul(modelMatrix,modelMatrix)
+        setLastPosition()
        //throw NotImplementedError()
+    }
+    fun rotateAroundPointOwn(pitch: Float, yaw: Float, roll: Float, altMidpoint: Vector3f) {
+        val m = Matrix4f()
+        m.translate(altMidpoint)
+        m.rotateXYZ(pitch,yaw,roll)
+        m.translate(altMidpoint.negate())
+        modelMatrix.mul(m)
+        setLastPosition()
+        //throw NotImplementedError()
     }
 
     /**
@@ -75,6 +89,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
         val m = Matrix4f()
         m.translate(deltaPos)
         modelMatrix.mul(m,modelMatrix)
+        setLastPosition()
      //   throw NotImplementedError()
     }
 
@@ -87,6 +102,7 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
         val m=Matrix4f()
         m.translate(deltaPos)
         m.mul(getWorldModelMatrix(),modelMatrix)
+        setLastPosition()
     }
 
     /**
@@ -192,10 +208,32 @@ open class Transformable(private var modelMatrix: Matrix4f = Matrix4f(), var par
 //        throw NotImplementedError()
     }
 
+    fun setModelMatrixUpperLeft(givenM: Matrix4f){
+        modelMatrix.set3x3(givenM)
+    }
+    fun rotateTowards(dir:Vector3f,up:Vector3f){
+        val m=Matrix4f()
+        modelMatrix.rotateTowards(dir,up,m)
+        m.mul(modelMatrix,modelMatrix)
+    }
+    fun setModelMatrix(givenM: Matrix4f){
+        modelMatrix.set(givenM)
+    }
     fun resetTransformations() {
         val m=Matrix4f()
         modelMatrix.set(m)
         scaleFactor=1f
+        setLastPosition()
 //        throw NotImplementedError()
+    }
+
+    fun getCalculatedVelocity():Vector3f{
+        val velocity= lastPosition.sub(getWorldPosition())
+        setLastPosition()
+        return velocity
+    }
+
+    fun setLastPosition(){
+        lastPosition=getWorldPosition()
     }
 }

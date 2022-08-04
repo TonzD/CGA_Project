@@ -44,7 +44,7 @@ class Tank(val playerType: PlayerType){
     }
 
     fun gainLp(){
-        if (lifePoints<5){
+        if (lifePoints<3){
             lifePoints++
             println(playerType.toString() +" current LP: "+lifePoints)
         } else println("already MAX Lp")

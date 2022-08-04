@@ -22,6 +22,7 @@ import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
+import kotlin.math.floor
 
 
 /**
@@ -37,10 +38,12 @@ class Scene(private val window: GameWindow) {
     var staticColor = Vector3f(0f, 1f, 0f)
     var cXPos = 0.0
     var cYPos = 0.0
+    var lastRoundedTime=0f
     val player1 = Tank(PlayerType.PLAYER1)
     val player2 = Tank(PlayerType.PLAYER2)
     var currentPlayer = player1
     var enemyPlayer = player2
+    var currentPlayerTurnTime=15f
     val missile= Missile()
     val orb= Orb()
     val spawnManager=SpawnManager()
@@ -51,7 +54,7 @@ class Scene(private val window: GameWindow) {
     //scene setup
 
     init {
-        staticShader = ShaderProgram("assets/shaders/toon_vert.glsl", "assets/shaders/toon_frag.glsl")
+        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
         toonShader = ShaderProgram("assets/shaders/toon_vert.glsl", "assets/shaders/toon_frag.glsl")
 
         //initial opengl state
@@ -149,6 +152,15 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         tCopy=t
+        if(currentPlayerTurnTime<t){
+            currentPlayerTurnTime=floor(t)+15f
+            switchPlayer()
+        }else{
+            if(currentPlayer.shooting||explosionStarted) {
+                currentPlayerTurnTime += 1f
+            }else{
+                showCountdown(t)}
+        }
         currentPlayer.move(window,dt)
         spawnManager.move(dt,t)
         spawnManager.spawn(t)
@@ -157,7 +169,12 @@ class Scene(private val window: GameWindow) {
         if(currentPlayer.shooting) checkMissileCollision(dt,t)
         endExplosionAnimation(dt,t)
     }
-
+    fun showCountdown(t:Float){
+        if(lastRoundedTime< floor(t)){
+            lastRoundedTime= floor(t)
+            println(currentPlayerTurnTime-lastRoundedTime)
+        }
+    }
     fun checkMissileCollision(dt:Float,t:Float) {
         if (spawnManager.checkMissileCollision(missile.getScaledRadius(), missile.model!!.getWorldPosition())){
             println("obstacleHit")
@@ -210,18 +227,19 @@ class Scene(private val window: GameWindow) {
                 missile.model!!.resetTransformations()
                 orb.model!!.resetTransformations()
                 projectileList.clear()
+                currentPlayerTurnTime=floor(t)+15f
                 switchPlayer()
                 explosionStarted=false
             }
         }
     }
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
-        if (!currentPlayer.shooting && key == GLFW_KEY_E && action == GLFW_PRESS) zoomIn()
+        if (!explosionStarted && !currentPlayer.shooting && key == GLFW_KEY_E && action == GLFW_PRESS) zoomIn()
         if (key == GLFW_KEY_T && action == GLFW_PRESS) switchPlayer()
-        if (currentPlayer.aiming && key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        if (!currentPlayer.shooting &&currentPlayer.aiming && key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
             missile.chargeStart =tCopy
         }
-        if (currentPlayer.aiming && key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+        if (!explosionStarted && !currentPlayer.shooting &&currentPlayer.aiming && key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
             missile.chargeEnd =tCopy
             missile.calculateCharge()
             shoot()

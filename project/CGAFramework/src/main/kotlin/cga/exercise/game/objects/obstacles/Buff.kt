@@ -10,7 +10,7 @@ class Buff ():Obstacles(){
     override var isIdle= true
     override var nextSpawn=Random.nextInt(0, 10).toFloat()
     override val model: Renderable?
-    override var radius = 1f
+    override var radius = 1.5f
     override var speed=1f
     override var speedA =0
     override var speedB= 0
@@ -80,5 +80,8 @@ class Buff ():Obstacles(){
         else return false
     }
 
+    override fun checkCollision(targetRadius: Float, targetWorldPosition: Vector3f): Boolean {
+        return false
+    }
     override fun setRanSpeed(){}
 }

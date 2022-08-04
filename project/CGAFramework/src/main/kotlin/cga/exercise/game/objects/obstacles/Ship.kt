@@ -9,7 +9,7 @@ class Ship(val spawnX: Float) : Obstacles () {
     override var isIdle = true
     override var nextSpawn = Random.nextInt(0, 5).toFloat()
     override val model: Renderable?
-    override var radius = 2f
+    override var radius = 2.3f
     override var speed = 0f
     override var speedA = 5
     override var speedB = 10
@@ -41,16 +41,32 @@ class Ship(val spawnX: Float) : Obstacles () {
         }
     }
     override fun checkCollision(targetRadius:Float, targetWorldPosition:Vector3f):Boolean{
-        val ownWorldPosition=model!!.getWorldPosition()
+        model!!.translate(Vector3f(0f,0.7f*model.scaleFactor.pow(-1),0.5f*model.scaleFactor.pow(-1)))
+        var ownWorldPosition=model!!.getWorldPosition()
+        model!!.translate(Vector3f(0f,-0.7f*model.scaleFactor.pow(-1),-0.5f*model.scaleFactor.pow(-1)))
         val distance1 = Math.sqrt(
-                    (ownWorldPosition.x-1 - targetWorldPosition.x).pow(2) +
+                    (ownWorldPosition.x - targetWorldPosition.x).pow(2) +
                     (ownWorldPosition.y - targetWorldPosition.y) .pow(2)+
-                    (ownWorldPosition.z  - targetWorldPosition.z).pow(2).toDouble())
+                    (ownWorldPosition.z- targetWorldPosition.z).pow(2).toDouble())
+
+        model!!.translate(Vector3f(0f,0.7f*model.scaleFactor.pow(-1),2.5f*model.scaleFactor.pow(-1)))
+        ownWorldPosition=model!!.getWorldPosition()
+        model!!.translate(Vector3f(0f,-0.7f*model.scaleFactor.pow(-1),-2.5f*model.scaleFactor.pow(-1)))
+
         val distance2 = Math.sqrt(
-                    (ownWorldPosition.x+0.5 - targetWorldPosition.x).pow(2) +
+                    (ownWorldPosition.x - targetWorldPosition.x).pow(2) +
                     (ownWorldPosition.y - targetWorldPosition.y) .pow(2)+
                     (ownWorldPosition.z - targetWorldPosition.z).pow(2).toDouble())
 
-        return distance1 < (getScaledRadius() + targetRadius) || distance2 < (getScaledRadius() + targetRadius)
+        model!!.translate(Vector3f(0f,0.7f*model.scaleFactor.pow(-1),-1.5f*model.scaleFactor.pow(-1)))
+        ownWorldPosition=model!!.getWorldPosition()
+        model!!.translate(Vector3f(0f,-0.7f*model.scaleFactor.pow(-1),1.5f*model.scaleFactor.pow(-1)))
+
+        val distance3 = Math.sqrt(
+                    (ownWorldPosition.x- targetWorldPosition.x).pow(2) +
+                    (ownWorldPosition.y - targetWorldPosition.y).pow(2)+
+                    (ownWorldPosition.z - targetWorldPosition.z).pow(2).toDouble())
+
+        return distance1 < (getScaledRadius() + targetRadius) || distance2 < (getScaledRadius() + targetRadius)|| distance3 < (getScaledRadius() + targetRadius)
     }
 }

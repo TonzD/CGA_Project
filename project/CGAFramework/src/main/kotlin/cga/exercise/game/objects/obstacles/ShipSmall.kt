@@ -22,25 +22,21 @@ class ShipSmall(val spawnX: Float) : Obstacles () {
     }
 
     override fun move(dt:Float){
-        if(side<=50){
-            model?.translate(Vector3f(0f,0f, speed * dt))
-        }else{
             model?.translate(Vector3f(0f, 0f, -speed * dt))
-        }
     }
 
     override fun setRandomSpawnSide(){
         side=Random.nextInt(0, 100)
         if(side<=50) {
             model?.resetTransformations()
-            model?.rotate(0f, Math.toRadians(270.0).toFloat(), 0f)
-            model?.translate(Vector3f(spawnX,0f,-50f))
+            model?.rotate(0f, Math.toRadians(90.0).toFloat(), 0f)
+            model?.translate(Vector3f(-spawnX,1.5f,50f))
             model?.scale(Vector3f(2f))
         }
         if(side>50){
             model?.resetTransformations()
-            model?.rotate(0f, Math.toRadians(270.0).toFloat(), 0f)
-            model?.translate(Vector3f(spawnX,0f,50f))
+            model?.rotate(0f, Math.toRadians(-90.0).toFloat(), 0f)
+            model?.translate(Vector3f(spawnX, 1.5f,50f))
             model?.scale(Vector3f(2f))
         }
     }

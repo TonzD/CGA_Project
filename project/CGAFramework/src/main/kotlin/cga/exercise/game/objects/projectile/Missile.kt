@@ -49,5 +49,4 @@ class Missile() {
         return distance < (getScaledRadius() + targetRadius)
     }
 
-
 }

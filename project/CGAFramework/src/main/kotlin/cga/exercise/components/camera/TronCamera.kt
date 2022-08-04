@@ -3,7 +3,6 @@ import cga.exercise.components.geometry.Transformable
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Matrix4f
 
-
 class TronCamera(): ICamera, Transformable() {
 
     override fun getCalculateViewMatrix(): Matrix4f {
@@ -19,7 +18,7 @@ class TronCamera(): ICamera, Transformable() {
         val fov = Math.toRadians(90.0).toFloat()
         val aspect = 16f / 9f
         val near = 0.1f
-        val far = 250f
+        val far = 300f
         val newMat = Matrix4f()
 
         return newMat.perspective(fov, aspect, near, far)

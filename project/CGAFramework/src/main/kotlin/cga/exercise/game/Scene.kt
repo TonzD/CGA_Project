@@ -116,10 +116,10 @@ class Scene(private val window: GameWindow) {
         player2.base?.translate(Vector3f(0f, spawnY.toFloat(), -spawnZ.toFloat()))
         player2.base?.rotate(0f,Math.toRadians(180.0).toFloat(),0f)
 
-        //Math.toRadians(270.0).toFloat()
 
         val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
         scene?.meshes!![2].material.tcMultiplier = Vector2f(3f,3f)
+        scene.meshes[2].material.diff = Texture2D("assets/models/Scene/scene_textures/waterdiff.png",true)
         scene.meshes[2].material.bump = Texture2D("assets/models/Scene/scene_textures/waterbump.png", true)
         scene.meshes[4].material.tcMultiplier = Vector2f(5f,1f)
         scene.scale(Vector3f(scenescale.toFloat()))

@@ -98,6 +98,7 @@ vec4 specterm(float specularStrength,vec3 norm,vec3 lightDir,vec3 viewDir,vec3 l
      vec3 result = specular * specColor;
      return vec4(result,1.0f);
 }
+
 void spotlight(vec3 norm,vec3 lightDir,vec3 lightColor,vec3 spotDir){
     float distance=length(lightDir);
     float attenuation = 1.0 / (distance * distance);
@@ -106,8 +107,6 @@ void spotlight(vec3 norm,vec3 lightDir,vec3 lightColor,vec3 spotDir){
     float theta = dot(lightDir,-spotDir);
     float epsilon= innerAngle-outerAngle;
     float intensity=clamp((theta-outerAngle)/epsilon,0.0,1.0);
-
-
 
     color+= diffterm(norm,lightDir,lightColor)*intensity;//*attenuation;
 

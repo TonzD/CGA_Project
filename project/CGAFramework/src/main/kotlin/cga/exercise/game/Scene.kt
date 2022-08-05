@@ -163,7 +163,7 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         tCopy=t
-        if(currentPlayerTurnTime<t && enemyPlayer.isAlive()){
+        if(currentPlayerTurnTime<t){
             currentPlayerTurnTime=floor(t)+15f
             switchPlayer()
         }else{
@@ -239,7 +239,7 @@ class Scene(private val window: GameWindow) {
                 orb.model!!.resetTransformations()
                 projectileList.clear()
                 currentPlayerTurnTime=floor(t)+15f
-                switchPlayer()
+                if(enemyPlayer.isAlive()) switchPlayer()
                 explosionStarted=false
             }
         }

@@ -75,14 +75,14 @@ vec3 normalMapping() {
 
 vec4 ambientTerm(float ambientStrength, vec3 lightColor){
     vec3 ambient = ambientStrength * lightColor;
-    vec3 objectColor=texture(emit,vertexData.tc).rgb;
+    vec3 objectColor=invgamma(texture(emit,vertexData.tc).rgb);
     vec3 result = objectColor*ambient;
     return vec4(result,1.0f);
 }
 
 vec4 diffterm(vec3 norm,vec3 lightDir,vec3 lightColor){
   //   vec3 diffTex=invgamma(texture(diff,vertexData.tc).xyz);
-     vec3 diffColor=texture(diff,vertexData.tc).xyz;
+     vec3 diffColor=invgamma(texture(diff,vertexData.tc).rgb);
      float diff = max(0.0, dot(norm,lightDir));
      vec3 result= vec3(diffColor*lightColor);
      return vec4(result*diff,1.0f);
@@ -90,11 +90,11 @@ vec4 diffterm(vec3 norm,vec3 lightDir,vec3 lightColor){
 
 vec4 specterm(float specularStrength,vec3 norm,vec3 lightDir,vec3 viewDir,vec3 lightColor){
   //   vec3 diffTex=invgamma(texture(diff,vertexData.tc).xyz);
-     vec3 diffColor=texture(diff,vertexData.tc).xyz;
+     vec3 diffColor=invgamma(texture(diff,vertexData.tc).rgb);
      vec3 reflectDir=reflect(-lightDir,norm);
      float specu = pow(max(dot(viewDir, reflectDir), 0.0f),shininess);
      vec3 specular = specularStrength * specu * lightColor;
-     vec3 specColor=texture(spec,vertexData.tc).xyz;
+     vec3 specColor=invgamma(texture(spec,vertexData.tc).xyz);
      vec3 result = specular * specColor;
      return vec4(result,1.0f);
 }
@@ -131,8 +131,8 @@ void pointlight(vec3 norm,vec3 lightDir,vec3 lightColor){
 
 void main(){
     // Ambiente Licht
-    float ambientStrength = 0.33f;
-    vec3 ambientLightColor= vec3(1.0f,0.65f,0.0f);
+    float ambientStrength = 0.1f;
+    vec3 ambientLightColor= vec3(1.0f,1.0f,1.0f);
     color += ambientTerm(ambientStrength,ambientLightColor);
 
     // diffuse
@@ -164,7 +164,7 @@ void main(){
 //    spotlight2(n,sl2,spotColor2,sd2);
 //    pointlight(n,l,lightColor);
 
- //   color=vec4(gamma(color.rgb),0.0f);
+   color=vec4(gamma(color.rgb),0.0f);
 
 
 }

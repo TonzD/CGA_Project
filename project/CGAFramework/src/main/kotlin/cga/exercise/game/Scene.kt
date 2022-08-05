@@ -29,8 +29,9 @@ import kotlin.math.floor
  * Created by Fabian on 16.09.2017.
  */
 class Scene(private val window: GameWindow) {
-    private val staticShader: ShaderProgram
+    private var staticShader: ShaderProgram
     private val toonShader: ShaderProgram
+    private val tronShader: ShaderProgram
     private var renderList: MutableList<Renderable> = mutableListOf()
     private var projectileList: MutableList<Renderable> = mutableListOf()
     val newCam = TronCamera()
@@ -55,9 +56,10 @@ class Scene(private val window: GameWindow) {
     //scene setup
 
     init {
-        staticShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
-        toonShader = ShaderProgram("assets/shaders/toon_vert.glsl", "assets/shaders/toon_frag.glsl")
 
+        tronShader = ShaderProgram("assets/shaders/tron_vert.glsl", "assets/shaders/tron_frag.glsl")
+        toonShader = ShaderProgram("assets/shaders/toon_vert.glsl", "assets/shaders/toon_frag.glsl")
+        staticShader= tronShader
         //initial opengl state
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
 //        glEnable(GL_CULL_FACE); GLError.checkThrow()
@@ -133,6 +135,7 @@ class Scene(private val window: GameWindow) {
       //  scene.meshes[2].material.diff = Texture2D("assets/models/Scene/scene_textures/waterdiff.png",true)
         scene?.meshes!![2].material.normalMap = Texture2D("assets/models/Scene/scene_textures/waternormal.png", true)
         scene.meshes[2].material.renderNormalMap = true
+        scene.meshes[2].material.tcMultiplier= Vector2f(2.0f)
         scene.meshes[4].material.tcMultiplier = Vector2f(5f,1f)
         scene.scale(Vector3f(scenescale.toFloat()))
         renderList.add(scene)
@@ -243,7 +246,7 @@ class Scene(private val window: GameWindow) {
     }
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
         if (!explosionStarted && !currentPlayer.shooting && key == GLFW_KEY_E && action == GLFW_PRESS) zoomIn()
-        if (key == GLFW_KEY_T && action == GLFW_PRESS) switchPlayer()
+        if (key == GLFW_KEY_T && action == GLFW_PRESS) switchShader()
         if (!currentPlayer.shooting &&currentPlayer.aiming && key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
             missile.chargeStart =tCopy
         }
@@ -251,6 +254,16 @@ class Scene(private val window: GameWindow) {
             missile.chargeEnd =tCopy
             missile.calculateCharge()
             shoot()
+        }
+    }
+
+    fun switchShader(){
+        if (staticShader==tronShader){
+            staticShader=toonShader
+            println("switched to celshader")
+        }else{
+            staticShader=tronShader
+            println("switched to tronshader")
         }
     }
 

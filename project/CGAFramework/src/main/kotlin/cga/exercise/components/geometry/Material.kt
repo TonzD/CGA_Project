@@ -10,7 +10,8 @@ class Material(
     var specular: Texture2D,
     var shininess: Float = 50.0f,
     var tcMultiplier: Vector2f = Vector2f(1.0f),
-    var normalMap: Texture2D?
+    var normalMap: Texture2D?,
+    var renderNormalMap: Boolean = false
 ){
 
     fun bind(shaderProgram: ShaderProgram) {
@@ -20,9 +21,12 @@ class Material(
         shaderProgram.setUniform("emit",0)
         shaderProgram.setUniform("diff",1)
         shaderProgram.setUniform("spec",2)
-        if (normalMap!= null){
+        if (normalMap != null && renderNormalMap){
             normalMap?.bind(3)
             shaderProgram.setUniform("normalMap",3)
+            shaderProgram.setUniform("renderNormalMap",1)
+        } else{
+            shaderProgram.setUniform("renderNormalMap",0);
         }
         shaderProgram.setUniform("shininess",shininess)
         shaderProgram.setUniform("tcMultiplier",tcMultiplier)

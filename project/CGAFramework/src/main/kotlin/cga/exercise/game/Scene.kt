@@ -7,7 +7,6 @@ import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.light.PointLight
-import cga.exercise.components.light.SpotLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import cga.exercise.game.objects.obstacles.BuffType
@@ -90,7 +89,7 @@ class Scene(private val window: GameWindow) {
         specular.setTexParams(GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR)
         val shininess = 5.0f
         val tcMultiplier = Vector2f(64f, 64f)
-        val material = Material(diff, emit, specular, shininess, tcMultiplier, null)
+        val material = Material(diff, emit, specular, shininess, tcMultiplier, null, false)
 
         val rBoden = Renderable(mutableListOf(Mesh(vertices, indices, attributes, material)))
         // rBoden.scale(Vector3f(0.03f))
@@ -130,9 +129,10 @@ class Scene(private val window: GameWindow) {
 
 
         val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
-        scene?.meshes!![2].material.tcMultiplier = Vector2f(3f,3f)
+//        scene?.meshes!![2].material.tcMultiplier = Vector2f(3f,3f)
       //  scene.meshes[2].material.diff = Texture2D("assets/models/Scene/scene_textures/waterdiff.png",true)
-        scene.meshes[2].material.normalMap = Texture2D("assets/models/Scene/scene_textures/waternormal.png", true)
+        scene?.meshes!![2].material.normalMap = Texture2D("assets/models/Scene/scene_textures/waternormal.png", true)
+        scene.meshes[2].material.renderNormalMap = true
         scene.meshes[4].material.tcMultiplier = Vector2f(5f,1f)
         scene.scale(Vector3f(scenescale.toFloat()))
         renderList.add(scene)
@@ -141,6 +141,7 @@ class Scene(private val window: GameWindow) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
         staticShader.use()
         newCam.bind(staticShader) // Macht es einen Unterschied, wenn wir die Camera vor den Objekten Binden oder danach?
+
         for (i in renderList) {
             i.render(staticShader)
         }

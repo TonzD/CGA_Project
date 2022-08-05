@@ -32,6 +32,7 @@ uniform sampler2D diff;
 uniform sampler2D emit;
 uniform sampler2D spec;
 uniform sampler2D normalMap;
+uniform int renderNormalMap;
 
 uniform vec3 staticColor;
 uniform vec3 camPos;
@@ -56,22 +57,20 @@ void alphaMapping() {
         discard;
 }
 
-void normalMapping() {
-
-    vec3 nMap = texture(normalMap, vertexData.tc).rgb;
-    if (nMap != 0){
-        float xval = vertexData.position.x;
-        float zval = vertexData.position.z;
-        vec3 xvec = vec3(xval,0.0,0.0);
-        vec3 zvec = vec3(0.0,0.0,zval);
-        vec3 newVertexNormal = cross(xvec,zvec);
-        if(newVertexNormal.y < 0){
-            newVertexNormal.y *-1.0;
-        }
-        normalize(newVertexNormal);
-        newVertexNormal = nMap;
-        newVertexNormal = normalize(newVertexNormal * 2.0 - 1.0);
+vec3 normalMapping() {
+    float xval = vertexData.position.x;
+    float zval = vertexData.position.z;
+    vec3 xvec = vec3(xval,0.0,0.0);
+    vec3 zvec = vec3(0.0,0.0,zval);
+    vec3 newVertexNormal = cross(xvec,zvec);
+    if(newVertexNormal.y < 0){
+        newVertexNormal.y *-1.0;
     }
+    newVertexNormal = normalize(newVertexNormal);
+    vec3 rgb_normal = newVertexNormal * 0.5 + 0.5;
+    rgb_normal = texture(normalMap, vertexData.tc).rgb;
+    rgb_normal = normalize(rgb_normal * 2.0 - 1.0);
+    return rgb_normal;
 }
 
 vec4 ambientTerm(float ambientStrength, vec3 lightColor){
@@ -137,7 +136,12 @@ void main(){
     color += ambientTerm(ambientStrength,ambientLightColor);
 
     // diffuse
-    vec3 norm = normalize(vertexData.normal);
+    vec3 norm;
+    if (renderNormalMap == 1){
+        norm = normalMapping();
+    } else {
+        norm = normalize(vertexData.normal);
+    }
     vec3 lightDir0=normalize(pointPos0-vertexData.position);
     vec3 lightDir1=normalize(pointPos1-vertexData.position);
   //  color+= diffterm(norm,lightDir,lightColor);
@@ -148,13 +152,12 @@ void main(){
  //   color+= specterm(specularStrength,norm,lightDir,viewDir,lightColor);
 
     //Spotlight
+    alphaMapping();
     vec3 spotDir=normalize(preSpotDir);
-
     pointlight(norm, lightDir0, lightColor0);
     pointlight(norm, lightDir1, lightColor1);
 
-    alphaMapping();
-   // normalMapping();
+
  //  color += vec4(texture(emit,vertexData.tc).rgb,1.0f);//*staticColor
 
  //   spotlight(norm,spotColor,lightDir);

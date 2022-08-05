@@ -49,6 +49,10 @@ Listen Sie hier alle Teammitglieder auf.
 - Phong und CelShader (Wechsel mittels "T") (Artur)
 - Dynamisches Erzeugen der Hindernisse und Buffs (Tony)
 - Kollisionserkennung (Tony)
+- Map-Gestaltung (Lars)
+- Alpha-Mapping (Lars)
+- Normal Mapping (Lars)
+- Sky Dome (Lars)
 
 # Quellenverzeichnis
 # Modelle

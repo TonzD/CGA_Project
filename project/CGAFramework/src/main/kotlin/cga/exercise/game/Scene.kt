@@ -163,14 +163,14 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         tCopy=t
-        if(currentPlayerTurnTime<t){
+        if(currentPlayerTurnTime<t && enemyPlayer.isAlive()){
             currentPlayerTurnTime=floor(t)+15f
             switchPlayer()
         }else{
             if(currentPlayer.shooting||explosionStarted) {
                 currentPlayerTurnTime += 1f
             }else{
-                showCountdown(t)}
+                if(enemyPlayer.isAlive()) showCountdown(t)}
         }
         currentPlayer.move(window,dt)
         spawnManager.move(dt,t)

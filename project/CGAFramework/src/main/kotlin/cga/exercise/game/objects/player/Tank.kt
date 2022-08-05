@@ -50,7 +50,7 @@ class Tank(val playerType: PlayerType){
         } else println("already MAX Lp")
     }
 
-  //  fun isDead():Boolean=lifePoints<=0
+    fun isAlive():Boolean=lifePoints>0
 
     fun move(window:GameWindow,dt:Float){
         if(aiming && !shooting){

@@ -1,6 +1,8 @@
 # CGAProject
 
 # Toon Tank Islands
+![alt text](https://github.com/TonzD/CGA_Project/blob/main/project/CGAFramework/assets/Title.png?raw=true)
+
 ## Spielprinzip
 
 Jeder Spieler spawned auf seiner eigenen Spielerhälfte, die durch ein Gewässer getrennt werden. Auf dem Gewässer erscheinen von zwei Seiten Hindernisse, die getroffen werden können.

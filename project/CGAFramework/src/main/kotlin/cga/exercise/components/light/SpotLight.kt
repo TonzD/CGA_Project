@@ -1,5 +1,6 @@
 package cga.exercise.components.light
 
+import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Math.cos
 import org.joml.Matrix3f
@@ -14,11 +15,11 @@ class SpotLight(
     private val innerAngle:Float= Math.toRadians(15.0).toFloat()
 ):PointLight(lPosI,rgb),ISpotLight{
 
-    override fun bind(shaderProgram: ShaderProgram, viewMatrix: Matrix4f) {
-
+    override fun bind(shaderProgram: ShaderProgram, cam:TronCamera) {
+        shaderProgram.setUniform("camPos",cam.getWorldPosition())
         shaderProgram.setUniform("spotPos",getWorldPosition())
-        shaderProgram.setUniform("spotColor",rgb)
-        shaderProgram.setUniform("spotDir",getWorldZAxis().negate().mul(Matrix3f(viewMatrix)))
+        shaderProgram.setUniform("lightColor",rgb)
+        shaderProgram.setUniform("preSpotDir",getWorldZAxis())
         shaderProgram.setUniform("outerAngle",cos(outerAngle))
         shaderProgram.setUniform("innerAngle",cos(innerAngle))
     }

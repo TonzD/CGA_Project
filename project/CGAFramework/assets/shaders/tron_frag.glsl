@@ -9,22 +9,22 @@ in struct VertexData
 
 } vertexData;
 
-// Spotlight Uniforms
-in vec3 toSpotLight1;
-in vec3 toSpotLight2;
-uniform vec3 spotDir1;
-uniform vec3 spotDir2;
-uniform vec3 spotColor1;
-uniform vec3 spotColor2;
-uniform float outerAngle1;
-uniform float outerAngle2;
-uniform float innerAngle1;
-uniform float innerAngle2;
 
-//Pointlight Uniforms
-in vec3 toLight;
-in vec3 toCamera;
-uniform vec3 lightColor;
+// Spotlight Uniforms
+
+uniform vec3 spotColor;
+uniform vec3 spotPos;
+uniform vec3 preSpotDir;
+uniform float outerAngle;
+uniform float innerAngle;
+
+
+//Pointlight0 Uniforms
+uniform vec3 pointPos0;
+uniform vec3 lightColor0;
+//Pointlight1 Uniforms
+uniform vec3 pointPos1;
+uniform vec3 lightColor1;
 uniform float shininess;
 
 // Texture Uniforms
@@ -34,6 +34,7 @@ uniform sampler2D spec;
 uniform sampler2D normalMap;
 
 uniform vec3 staticColor;
+uniform vec3 camPos;
 
 //fragment shader output
 out vec4 color;
@@ -47,53 +48,6 @@ vec3 gamma( vec3 C_linear){
 
 vec3 invgamma( vec3 C_gamma){
     return pow(C_gamma.rgb, vec3(g));
-}
-
-vec4 diffterm(vec3 n,vec3 l,vec3 col){
-     float cosa = max(0.0, dot(n,l));
-     vec3 diffTex=invgamma(texture(diff,vertexData.tc).rgb)*col;
-     vec4 result= vec4(diffTex*cosa,1.0f);
-     return vec4(result);
-}
-
-vec4 specterm(vec3 n,vec3 l,vec3 col){
-   // vec3 r=normalize(reflect(-l,n));
-   vec3 v=normalize(toCamera);
-   vec3 halfway= normalize(v+l);
-   float sCol = pow(max(dot(n, halfway), 0.0), shininess);
-   // float cosb = max(0.0, dot(r,v));
-    vec3 specTex=invgamma(texture(spec,vertexData.tc).rgb)*col;
-
-    vec4 result= vec4(vec3(specTex*sCol),0.0);
-    return vec4(result);
-}
-
-void spotlight1(vec3 n,vec3 sl,vec3 col,vec3 sd){
-    float distance=length(toSpotLight1);
-    float attenuation = 1.0 / (distance * distance);
-    //float attenuation = 1.0 / (1+(0.45*distance)+(0.0075*distance * distance));
-
-    float theta = dot(sl,-sd);
-    float epsilon= innerAngle1-outerAngle1;
-    float intensity=clamp((theta-outerAngle1)/epsilon,0.0,1.0);
-    color+=(diffterm(n,sl,col)+specterm(n,sl,col))*intensity*attenuation;
-}
-void spotlight2(vec3 n,vec3 sl,vec3 col,vec3 sd){
-    float distance=length(toSpotLight2);
-    //float attenuation = 1.0 / (distance * distance);
-    float attenuation = 1.0 / (1+(0.022*distance)+(0.0019*distance * distance));
-
-    float theta = dot(sl,-sd);
-    float epsilon= innerAngle2-outerAngle2;
-    float intensity=clamp((theta-outerAngle2)/epsilon,0.0,1.0);
-    color+=(diffterm(n,sl,col)+specterm(n,sl,col))*intensity*attenuation;
-}
-void pointlight(vec3 n,vec3 l,vec3 col){
-    float distance=length(toLight);
-    float attenuation = 1.0 / (distance * distance);
-   // float attenuation = 1.0 / (1+(0.09*distance)+(0.032*distance * distance));
-    color+=(specterm(n,l,col));
-  //  diffterm(n,l,col)+*attenuation
 }
 
 void alphaMapping() {
@@ -120,27 +74,95 @@ void normalMapping() {
     }
 }
 
+vec4 ambientTerm(float ambientStrength, vec3 lightColor){
+    vec3 ambient = ambientStrength * lightColor;
+    vec3 objectColor=texture(emit,vertexData.tc).rgb;
+    vec3 result = objectColor*ambient;
+    return vec4(result,1.0f);
+}
+
+vec4 diffterm(vec3 norm,vec3 lightDir,vec3 lightColor){
+  //   vec3 diffTex=invgamma(texture(diff,vertexData.tc).xyz);
+     vec3 diffColor=texture(diff,vertexData.tc).xyz;
+     float diff = max(0.0, dot(norm,lightDir));
+     vec3 result= vec3(diffColor*lightColor);
+     return vec4(result*diff,1.0f);
+}
+
+vec4 specterm(float specularStrength,vec3 norm,vec3 lightDir,vec3 viewDir,vec3 lightColor){
+  //   vec3 diffTex=invgamma(texture(diff,vertexData.tc).xyz);
+     vec3 diffColor=texture(diff,vertexData.tc).xyz;
+     vec3 reflectDir=reflect(-lightDir,norm);
+     float specu = pow(max(dot(viewDir, reflectDir), 0.0f),shininess);
+     vec3 specular = specularStrength * specu * lightColor;
+     vec3 specColor=texture(spec,vertexData.tc).xyz;
+     vec3 result = specular * specColor;
+     return vec4(result,1.0f);
+}
+void spotlight(vec3 norm,vec3 lightDir,vec3 lightColor,vec3 spotDir){
+    float distance=length(lightDir);
+    float attenuation = 1.0 / (distance * distance);
+    //float attenuation = 1.0 / (1+(0.45*distance)+(0.0075*distance * distance));
+
+    float theta = dot(lightDir,-spotDir);
+    float epsilon= innerAngle-outerAngle;
+    float intensity=clamp((theta-outerAngle)/epsilon,0.0,1.0);
+
+
+
+    color+= diffterm(norm,lightDir,lightColor)*intensity;//*attenuation;
+
+    float specularStrength = 0.2f;
+    vec3 viewDir= normalize(camPos-vertexData.position);
+    color+= specterm(specularStrength,norm,lightDir,viewDir,lightColor)*intensity;//*attenuation;
+ //   color+=(diffterm(norm,sl,col)+specterm(norm,sl,col))*intensity*attenuation;
+}
+void pointlight(vec3 norm,vec3 lightDir,vec3 lightColor){
+    float distance=length(lightDir);
+  //  float attenuation = 1.0 / (distance * distance);
+   // float attenuation = 1.0 / (1+(0.09*distance)+(0.032*distance * distance));
+   float attenuation = 1.0 / (1.0f + 0.07f * distance + 0.017f * (distance * distance));
+
+    color+= diffterm(norm,lightDir,lightColor)*attenuation;
+
+    float specularStrength = 0.2f;
+    vec3 viewDir= normalize(camPos-vertexData.position);
+    color+= specterm(specularStrength,norm,lightDir,viewDir,lightColor)*attenuation;
+}
+
 void main(){
-    //color = vec4(0, (0.5f + abs(vertexData.position.z)), 0, 1.0f);
-    //color = vec4(abs(vertexData.tc), 1.0f);
+    // Ambiente Licht
+    float ambientStrength = 0.33f;
+    vec3 ambientLightColor= vec3(1.0f,0.65f,0.0f);
+    color += ambientTerm(ambientStrength,ambientLightColor);
 
-    // Alle Vektoren durch Normalisieren korrigieren
+    // diffuse
+    vec3 norm = normalize(vertexData.normal);
+    vec3 lightDir0=normalize(pointPos0-vertexData.position);
+    vec3 lightDir1=normalize(pointPos1-vertexData.position);
+  //  color+= diffterm(norm,lightDir,lightColor);
 
-    vec3 sl1=normalize(toSpotLight1);
-    vec3 sl2=normalize(toSpotLight2);
-    vec3 sd1=normalize(spotDir1);
-    vec3 sd2=normalize(spotDir2);
-    vec3 n=normalize(vertexData.normal);
-    vec3 l=normalize(toLight);
+    //specular
+//    float specularStrength = 0.2f;
+  //  vec3 viewDir= normalize(camPos-vertexData.position);
+ //   color+= specterm(specularStrength,norm,lightDir,viewDir,lightColor);
+
+    //Spotlight
+    vec3 spotDir=normalize(preSpotDir);
+
+    pointlight(norm, lightDir0, lightColor0);
+    pointlight(norm, lightDir1, lightColor1);
+
     alphaMapping();
-    normalMapping();
-    color += vec4(invgamma(texture(emit,vertexData.tc).rgb)*staticColor,1.0f);
+   // normalMapping();
+ //  color += vec4(texture(emit,vertexData.tc).rgb,1.0f);//*staticColor
 
-//    spotlight1(n,sl1,spotColor1,sd1);
+ //   spotlight(norm,spotColor,lightDir);
 //    spotlight2(n,sl2,spotColor2,sd2);
 //    pointlight(n,l,lightColor);
 
-    color=vec4(gamma(color.rgb),1.0f);
+ //   color=vec4(gamma(color.rgb),0.0f);
+
 
 }
 

@@ -6,6 +6,7 @@ import cga.exercise.components.geometry.Material
 import cga.exercise.components.geometry.Mesh
 import cga.exercise.components.geometry.Renderable
 import cga.exercise.components.geometry.VertexAttribute
+import cga.exercise.components.light.PointLight
 import cga.exercise.components.light.SpotLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
@@ -34,8 +35,9 @@ class Scene(private val window: GameWindow) {
     private var renderList: MutableList<Renderable> = mutableListOf()
     private var projectileList: MutableList<Renderable> = mutableListOf()
     val newCam = TronCamera()
-    var spotLight2: SpotLight
-    var staticColor = Vector3f(0f, 1f, 0f)
+    var pointLight1: PointLight
+    var pointLight2: PointLight
+    var staticColor = Vector3f(1.0f,1f,1f)
     var cXPos = 0.0
     var cYPos = 0.0
     var lastRoundedTime=0f
@@ -95,7 +97,8 @@ class Scene(private val window: GameWindow) {
         var angle = Math.toRadians(45.0).toFloat()
         //rBoden.rotate(0f,0f,angle)
 
- //      renderList.add(rBoden)
+      // renderList.add(rBoden)
+
 
         //Camera binden
         angle = Math.toRadians(-35.0).toFloat()
@@ -103,20 +106,23 @@ class Scene(private val window: GameWindow) {
         newCam.rotate(angle, 0f, 0f)
         newCam.parent = currentPlayer.base
 
-        // Weitere Lichtquelle
-        spotLight2 = SpotLight(
-            Vector3f(0f, 5f, 0f),
-            Vector3f(1f, 0f, 0f),
-            Math.toRadians(20.0).toFloat(),
-            Math.toRadians(15.0).toFloat()
-        )
-        spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
-        spotLight2.rotateWorld(Math.toRadians(-90.0).toFloat(), 0f, 0f)
-
-
         val scenescale = 0.75
         val spawnY = 6.0 * scenescale
         val spawnZ = 55 * scenescale
+        // Erste Lichtquelle
+        pointLight1 = PointLight(
+            Vector3f(0f, 60f, spawnZ.toFloat()),
+            Vector3f(1f, 1f, 1f)
+        )
+        //pointLight1.rotate(Math.toRadians(90.0).toFloat(), 0f, 0f)
+
+        // zweite Lichtquelle
+        pointLight2 = PointLight(
+            Vector3f(0f, 60f, -spawnZ.toFloat()),
+            Vector3f(1f, 1f, 1f)
+        )
+      //  spotLight2.parent=currentPlayer.base
+
 
         player1.base?.translate(Vector3f(0f, spawnY.toFloat(), spawnZ.toFloat()))
         player2.base?.translate(Vector3f(0f, spawnY.toFloat(), -spawnZ.toFloat()))
@@ -125,7 +131,7 @@ class Scene(private val window: GameWindow) {
 
         val scene = loadModel("assets/models/scene/gamescene.obj",0f,0f,0f)
         scene?.meshes!![2].material.tcMultiplier = Vector2f(3f,3f)
-        scene.meshes[2].material.diff = Texture2D("assets/models/Scene/scene_textures/waterdiff.png",true)
+      //  scene.meshes[2].material.diff = Texture2D("assets/models/Scene/scene_textures/waterdiff.png",true)
         scene.meshes[2].material.normalMap = Texture2D("assets/models/Scene/scene_textures/waternormal.png", true)
         scene.meshes[4].material.tcMultiplier = Vector2f(5f,1f)
         scene.scale(Vector3f(scenescale.toFloat()))
@@ -146,7 +152,8 @@ class Scene(private val window: GameWindow) {
         }
         player1.render(staticShader)
         player2.render(staticShader)
-        spotLight2.bind(staticShader)
+        pointLight1.bind(staticShader,staticColor,0)
+   //     pointLight2.bind(staticShader,staticColor,1)
 
     }
 

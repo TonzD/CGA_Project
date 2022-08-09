@@ -41,10 +41,8 @@ abstract class Obstacles (){
     }
     open fun checkCollision(targetRadius:Float, targetWorldPosition:Vector3f):Boolean{
         val ownWorldPosition=model!!.getWorldPosition()
-        val distance = Math.sqrt(
-                    (ownWorldPosition.x - targetWorldPosition.x).pow(2) +
-                    (ownWorldPosition.y - targetWorldPosition.y) .pow(2)+
-                    (ownWorldPosition.z - targetWorldPosition.z).pow(2).toDouble())
+        val distance = ownWorldPosition.sub(targetWorldPosition).length()
+
         return distance < (getScaledRadius() + targetRadius)
     }
     open fun setRanSpeed() {

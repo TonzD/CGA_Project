@@ -25,6 +25,7 @@ uniform vec3 lightColor0;
 //Pointlight1 Uniforms
 uniform vec3 pointPos1;
 uniform vec3 lightColor1;
+
 uniform float shininess;
 
 // Texture Uniforms
@@ -143,7 +144,7 @@ void main(){
     }
     vec3 lightDir0=normalize(pointPos0-vertexData.position);
     vec3 lightDir1=normalize(pointPos1-vertexData.position);
-  //  color+= diffterm(norm,lightDir,lightColor);
+    color+= diffterm(norm,lightDir,lightColor);
 
     //specular
 //    float specularStrength = 0.2f;

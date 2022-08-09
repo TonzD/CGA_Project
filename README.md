@@ -1,6 +1,8 @@
 # CGAProject
 
 # Toon Tank Islands
+![alt text](https://github.com/TonzD/CGA_Project/blob/main/project/CGAFramework/assets/Title.png?raw=true)
+
 ## Spielprinzip
 
 Jeder Spieler spawned auf seiner eigenen Spielerhälfte, die durch ein Gewässer getrennt werden. Auf dem Gewässer erscheinen von zwei Seiten Hindernisse, die getroffen werden können.
@@ -37,25 +39,23 @@ Maus Panzersteuerung - zoom
 
 
 # Teammitglieder
-Listen Sie hier alle Teammitglieder auf.
 - Artur Denissov
 - Lars Oliver Drabek
 - Uoc Linh Tony Nguyen
 
-# Featureliste
-- 
+## Featureliste
+- Map-Gestaltung (Lars)
+- Alpha-Mapping (Lars)
+- Normal Mapping (Lars)
+- Sky Dome (Lars)
 - Verschiedene Kameramodelle (Wechsel zwischen orthographischer und perspektivischer Kamera mittels "E") (Tony)
 - Dynamische Kamera (Steuerung mittels Maus und "WASD" auf der Tastatur) (Tony)
 - Phong und CelShader (Wechsel mittels "T") (Artur)
 - Dynamisches Erzeugen der Hindernisse und Buffs (Tony)
 - Kollisionserkennung (Tony)
-- Map-Gestaltung (Lars)
-- Alpha-Mapping (Lars)
-- Normal Mapping (Lars)
-- Sky Dome (Lars)
 
 # Quellenverzeichnis
-# Modelle
+## Modelle
 
 Flugzeug:     https://www.cgtrader.com/free-3d-models/aircraft/military-aircraft/w-8e88246b-cb53-4fed-9f05-1907cea02aff
 
